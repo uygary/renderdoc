@@ -1,0 +1,68 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Development" />
+    <BuildType Name="Release" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/DLL/">
+    <Project Path="renderdoc/renderdoc.vcxproj">
+      <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/common.vcxproj" />
+      <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_client.vcxproj" />
+      <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_server.vcxproj" />
+      <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/handler/exception_handler.vcxproj" />
+      <BuildDependency Project="renderdoc/driver/ihv/nv/NV.vcxproj" />
+    </Project>
+  </Folder>
+  <Folder Name="/DLL/breakpad/">
+    <Project Path="renderdoc/3rdparty/breakpad/client/windows/common.vcxproj">
+      <Build Solution="Development|*" Project="false" />
+    </Project>
+    <Project Path="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_client.vcxproj">
+      <Build Solution="Development|*" Project="false" />
+    </Project>
+    <Project Path="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_server.vcxproj">
+      <Build Solution="Development|*" Project="false" />
+    </Project>
+    <Project Path="renderdoc/3rdparty/breakpad/client/windows/handler/exception_handler.vcxproj">
+      <Build Solution="Development|*" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/DLL/drivers/">
+    <Project Path="renderdoc/driver/d3d11/renderdoc_d3d11.vcxproj" />
+    <Project Path="renderdoc/driver/d3d12/renderdoc_d3d12.vcxproj" />
+    <Project Path="renderdoc/driver/dxgi/renderdoc_dxgi.vcxproj" />
+    <Project Path="renderdoc/driver/gl/renderdoc_gl.vcxproj" />
+    <Project Path="renderdoc/driver/vulkan/renderdoc_vulkan.vcxproj" />
+  </Folder>
+  <Folder Name="/DLL/drivers/IHV/">
+    <Project Path="renderdoc/driver/ihv/amd/AMD.vcxproj" />
+    <Project Path="renderdoc/driver/ihv/arm/ARM.vcxproj" />
+    <Project Path="renderdoc/driver/ihv/intel/Intel.vcxproj" />
+    <Project Path="renderdoc/driver/ihv/nv/NV.vcxproj" />
+  </Folder>
+  <Folder Name="/DLL/drivers/shaders/">
+    <Project Path="renderdoc/driver/shaders/dxbc/renderdoc_dxbc.vcxproj" />
+    <Project Path="renderdoc/driver/shaders/dxil/renderdoc_dxil.vcxproj" />
+    <Project Path="renderdoc/driver/shaders/spirv/renderdoc_spirv.vcxproj" />
+  </Folder>
+  <Folder Name="/UI/">
+    <Project Path="qrenderdoc/qrenderdoc_local.vcxproj" />
+  </Folder>
+  <Folder Name="/UI/Python Modules/">
+    <Project Path="qrenderdoc/Code/pyrenderdoc/pyrenderdoc_module.vcxproj" />
+    <Project Path="qrenderdoc/Code/pyrenderdoc/qrenderdoc_module.vcxproj" />
+  </Folder>
+  <Folder Name="/Utility/">
+    <Project Path="qrenderdoc/renderdocui_stub.vcxproj" />
+    <Project Path="renderdoc/renderdoc_version.vcxproj" />
+    <Project Path="renderdoccmd/renderdoccmd.vcxproj">
+      <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/common.vcxproj" />
+      <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_client.vcxproj" />
+      <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_server.vcxproj" />
+      <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/handler/exception_handler.vcxproj" />
+      <BuildDependency Project="renderdoc/renderdoc.vcxproj" />
+    </Project>
+    <Project Path="renderdocshim/renderdocshim.vcxproj" />
+  </Folder>
+</Solution>
