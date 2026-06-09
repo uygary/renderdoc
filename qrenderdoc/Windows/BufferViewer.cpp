@@ -296,7 +296,11 @@ public:
   {
     CameraWrapper::MouseWheel(e);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    float mod = (1.0f - e->angleDelta().y() / 2500.0f);
+#else
     float mod = (1.0f - e->delta() / 2500.0f);
+#endif
 
     SetDistance(qMax(1e-6f, m_Distance * mod));
   }
@@ -497,7 +501,11 @@ struct BufferData
 {
   BufferData()
   {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    refcount.storeRelaxed(1);
+#else
     refcount.store(1);
+#endif
     stride = 0;
   }
 
@@ -959,7 +967,7 @@ public:
   Qt::ItemFlags flags(const QModelIndex &index) const override
   {
     if(!index.isValid())
-      return 0;
+      return Qt::NoItemFlags;
 
     return QAbstractItemModel::flags(index);
   }
@@ -1001,7 +1009,12 @@ public:
     {
       if(role == Qt::SizeHintRole)
       {
-        QStyleOptionViewItem opt = view->viewOptions();
+        QStyleOptionViewItem opt;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        view->initViewItemOption(&opt);
+#else
+        opt = view->viewOptions();
+#endif
         opt.features |= QStyleOptionViewItem::HasDisplay;
 
         // pad these columns to allow for sufficiently wide data
@@ -3437,7 +3450,7 @@ void BufferViewer::OnEventChanged(uint32_t eventId)
         // stage, slot, and array index are all invariant when viewing a constant buffer
         // ee only need to use the actual bound shader as a key.
         RDTreeViewExpansionState &prevShaderExpansionState =
-            ui->fixedVars->getInternalExpansion(qHash(ToQStr(m_CurCBuffer.shader)));
+            ui->fixedVars->getInternalExpansion((uint)qHash(ToQStr(m_CurCBuffer.shader)));
 
         ui->fixedVars->saveExpansion(prevShaderExpansionState, 0);
       }
@@ -3909,8 +3922,8 @@ void BufferViewer::OnEventChanged(uint32_t eventId)
         // if we have saved expansion state for the new shader, apply it, otherwise apply the
         // previous one to get any overlap (e.g. two different shaders with very similar or
         // identical constants)
-        if(ui->fixedVars->hasInternalExpansion(qHash(ToQStr(shader))))
-          ui->fixedVars->applyExpansion(ui->fixedVars->getInternalExpansion(qHash(ToQStr(shader))),
+        if(ui->fixedVars->hasInternalExpansion((uint)qHash(ToQStr(shader))))
+          ui->fixedVars->applyExpansion(ui->fixedVars->getInternalExpansion((uint)qHash(ToQStr(shader))),
                                         0);
         else
           ui->fixedVars->applyExpansion(state, 0);
@@ -3977,9 +3990,9 @@ void BufferViewer::OnEventChanged(uint32_t eventId)
           // if we have saved expansion state for the new shader, apply it, otherwise apply the
           // previous one to get any overlap (e.g. two different shaders with very similar or
           // identical constants)
-          if(ui->fixedVars->hasInternalExpansion(qHash(ToQStr(m_CurCBuffer.shader))))
+          if(ui->fixedVars->hasInternalExpansion((uint)qHash(ToQStr(m_CurCBuffer.shader))))
             ui->fixedVars->applyExpansion(
-                ui->fixedVars->getInternalExpansion(qHash(ToQStr(m_CurCBuffer.shader))), 0);
+                ui->fixedVars->getInternalExpansion((uint)qHash(ToQStr(m_CurCBuffer.shader))), 0);
           else
             ui->fixedVars->applyExpansion(state, 0);
         }

@@ -29,12 +29,14 @@
 // on AVX if we can help it
 
 // include this header first (on older SDKs it might not include this but it's not a heavy header
+#ifndef _M_ARM64
 #include <immintrin.h>
 
 // if this isn't defined (by new compiler versions) then define it now. This may break in future if
 // this becomes a real function instead of a define...
 #ifndef _mm_loadu_si64
 #define _mm_loadu_si64(p) _mm_loadl_epi64((__m128i const *)(p))
+#endif
 #endif
 
 // include the real wchar.h. To avoid self-referential includes we assume it sits in a ucrt folder

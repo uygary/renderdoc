@@ -1,24 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Development|Win32">
-      <Configuration>Development</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Development|x64">
       <Configuration>Development</Configuration>
       <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Development|ARM64">
+      <Configuration>Development</Configuration>
+      <Platform>ARM64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
-  <PropertyGroup Label="Globals">
+  <PropertyGroup Label="Globals"><PreferredToolArchitecture>x64</PreferredToolArchitecture>
     <ProjectGuid>{257FD75C-4D17-4A23-A754-23BFD85887A0}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>version</RootNamespace>
@@ -29,7 +29,7 @@
   <PropertyGroup>
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -57,6 +57,11 @@
       <PreprocessorDefinitions>WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='ARM64'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN64;WINARM64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <!-- Thanks to https://stackoverflow.com/a/43815817/4070143 -->
   <!-- fetch the path of the assembly, and unescape it so MSBuild doesn't choke on brackets in "Program Files (x86)" -->
@@ -66,7 +71,7 @@
     <!-- if the path still doesn't work, unset and we'll do manual ref lookups instead -->
     <LibGit2SharpPath Condition="!exists('$(LibGit2SharpPath)')"></LibGit2SharpPath>
     <!-- on MSBuild 17 (VS2022 and up) the LibGit2Sharp.dll can't load its git dll because of architecture mismatches, so do manual ref lookups -->
-    <LibGit2SharpPath Condition="'$(MSBuildVersion.Length)' > 0 And '$(MSBuildVersion.Substring(0,2))' >= 17"></LibGit2SharpPath>
+    <LibGit2SharpPath Condition="'$(MSBuildVersion.Length)' &gt; 0 And '$(MSBuildVersion.Substring(0,2))' &gt;= 17"></LibGit2SharpPath>
   </PropertyGroup>
   <!-- Declare the task with some inline code -->
   <UsingTask TaskName="GetGitCommitDotNet" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
@@ -77,8 +82,7 @@
     </ParameterGroup>
     <Task>
       <Reference Include="$(LibGit2SharpPath)" />
-      <Code Type="Class" Language="cs">
-<![CDATA[
+      <Code Type="Class" Language="cs"><![CDATA[
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -107,8 +111,7 @@ namespace GitIntrospection {
     [Microsoft.Build.Framework.Output] public string Sha1 { get; set; }
   }
 }
-]]>
-      </Code>
+]]></Code>
     </Task>
   </UsingTask>
   <UsingTask TaskName="GetGitCommitManual" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
@@ -117,8 +120,7 @@ namespace GitIntrospection {
       <Repository ParameterType="System.String" Required="True" Output="False" />
     </ParameterGroup>
     <Task>
-      <Code Type="Class" Language="cs">
-<![CDATA[
+      <Code Type="Class" Language="cs"><![CDATA[
 using System;
 using System.IO;
 
@@ -159,11 +161,12 @@ namespace GitIntrospection {
     [Microsoft.Build.Framework.Output] public string Sha1 { get; set; }
   }
 }
-]]>
-      </Code>
+]]></Code>
     </Task>
   </UsingTask>
-  <PropertyGroup><DisableFastUpToDateCheck>true</DisableFastUpToDateCheck></PropertyGroup>
+  <PropertyGroup>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
   <!-- Only actually run the task if we located the assembly for LibGit2Sharp. Otherwise silently skip this step. -->
   <Target Name="RunTaskDotNet" BeforeTargets="PrepareForBuild" Condition="exists('$(LibGit2SharpPath)')">
     <GetGitCommitDotNet Repository="$(SolutionDir)" LibGit2SharpAssemblyPath="$(LibGit2SharpPath)" ContinueOnError="WarnAndContinue">
@@ -194,3 +197,4 @@ namespace GitIntrospection {
     <ClCompile Include="replay\version.cpp" />
   </ItemGroup>
 </Project>
+

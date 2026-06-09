@@ -279,7 +279,9 @@
 #endif
 
 #if HALF_ENABLE_F16C_INTRINSICS
+#ifndef _M_ARM64
 	#include <immintrin.h>
+#endif
 #endif
 
 #ifdef HALF_DOXYGEN_ONLY

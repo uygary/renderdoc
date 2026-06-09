@@ -184,7 +184,9 @@ int main(int argc, char *argv[])
 {
   // call this as the very first thing - no-op on other platforms, but on linux it means
   // XInitThreads will be called allowing driver access to xlib on multiple threads.
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
+#endif
 
   qInstallMessageHandler(sharedLogOutput);
 

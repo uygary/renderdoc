@@ -63,7 +63,7 @@ public:
   Qt::ItemFlags flags(const QModelIndex &index) const override
   {
     if(!index.isValid())
-      return 0;
+      return Qt::NoItemFlags;
 
     return QAbstractItemModel::flags(index);
   }
@@ -135,6 +135,7 @@ public:
   DebugMessageFilterModel(ICaptureContext &ctx, QObject *parent)
       : QSortFilterProxyModel(parent), m_Ctx(ctx)
   {
+    setSortRole(SortDataRole);
   }
 
   typedef QPair<QPair<MessageSource, MessageCategory>, uint32_t> MessageType;
@@ -196,10 +197,6 @@ protected:
     return true;
   }
 
-  bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
-  {
-    return sourceModel()->data(left, SortDataRole) < sourceModel()->data(right, SortDataRole);
-  }
 
 private:
   ICaptureContext &m_Ctx;

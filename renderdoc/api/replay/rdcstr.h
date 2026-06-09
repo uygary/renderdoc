@@ -945,6 +945,16 @@ inline rdcstr operator+(const QChar &left, const rdcstr &right)
 {
   return rdcstr(left) += right;
 }
+
+#include <QHash>
+inline size_t qHash(const rdcstr &key, size_t seed = 0)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  return qHash(QByteArrayView(key.c_str(), key.length()), seed);
+#else
+  return qHash(QByteArray(key.c_str(), (int)key.length()), seed);
+#endif
+}
 #endif
 
 // this class generally should not be used directly. You almost always want rdcstr (or rarely
@@ -982,7 +992,7 @@ class rdcinflexiblestr
   // we use tagged pointers on x86-64 to minimise storage. On other architecture this isn't safe
   // so we have to keep it separate. This is still a storage win over rdcstr
 
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(__x86_64__) || defined(_M_X64) || defined(__aarch64__) || defined(_M_ARM64)
   // use a signed pointer to sign-extend for canonical form
   intptr_t pointer : 63;
   intptr_t is_literal : 1;

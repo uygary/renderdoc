@@ -31,6 +31,7 @@
 #include <QMouseEvent>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QStandardPaths>
 #include <QPixmapCache>
 #include <QProgressBar>
 #include <QProgressDialog>
@@ -80,10 +81,17 @@ void NetworkWorker::get(QUrl url)
 
   // connect up error and finished slots on *this* thread, and in the lambda emit signals to
   // cross-thread back onto the UI thread.
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  QObject::connect(req, &QNetworkReply::errorOccurred,
+                   [this, req](QNetworkReply::NetworkError) {
+                     emit requestFailed(req->url(), req->errorString());
+                   });
+#else
   QObject::connect(req, OverloadedSlot<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
                    [this, req](QNetworkReply::NetworkError) {
                      emit requestFailed(req->url(), req->errorString());
                    });
+#endif
 
   QObject::connect(req, &QNetworkReply::finished, [this, req]() {
     if(req->error() != QNetworkReply::NoError)
@@ -232,6 +240,7 @@ MainWindow::MainWindow(ICaptureContext &ctx) : QMainWindow(NULL), ui(new Ui::Mai
   QTimer *vkconfigCheckTimer = new QTimer(this);
   QObject::connect(vkconfigCheckTimer, &QTimer::timeout, [vkconfigCheckTimer]() {
     QString homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    QString desktopPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 
     // for some reason these paths have changed a lot so we have to check them all :(
     const QString basePaths[] = {
@@ -621,7 +630,7 @@ void MainWindow::on_action_Open_Capture_with_Options_triggered()
 
   QVBoxLayout l;
   l.addWidget(replayOptions);
-  l.setMargin(3);
+  l.setContentsMargins(3, 3, 3, 3);
   l.setSizeConstraint(QLayout::SetFixedSize);
 
   openWithOptions->setLayout(&l);

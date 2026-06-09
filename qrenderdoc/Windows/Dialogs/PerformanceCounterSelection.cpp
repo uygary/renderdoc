@@ -36,10 +36,17 @@
 
 // we can't specialise the template, but creating an overload works. This lets us use
 // QSet<GPUCounter>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+inline size_t qHash(const GPUCounter &t, size_t seed = 0)
+{
+  return qHash(uint32_t(t), seed);
+}
+#else
 inline uint qHash(const GPUCounter &t)
 {
   return qHash(uint32_t(t));
 }
+#endif
 
 namespace
 {
@@ -452,7 +459,11 @@ void PerformanceCounterSelection::Load()
         selectedCounters.insert(m_UuidToCounter[uuid]);
       }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+      SetSelectedCounters(selectedCounters.values());
+#else
       SetSelectedCounters(selectedCounters.toList());
+#endif
     }
     else
     {

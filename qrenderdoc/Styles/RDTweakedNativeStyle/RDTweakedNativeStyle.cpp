@@ -180,7 +180,7 @@ void RDTweakedNativeStyle::drawComplexControl(ComplexControl control, const QSty
 
     QPen oldPen = p->pen();
     QColor backCol = opt->palette.color(QPalette::Normal, QPalette::Highlight);
-    backCol.setAlphaF(0.2);
+    backCol.setAlphaF(0.2f);
 
     QStyleOptionToolButton menu;
     bool hasMenu = false;
@@ -218,7 +218,7 @@ void RDTweakedNativeStyle::drawComplexControl(ComplexControl control, const QSty
 
       // when the mouse is over, make it a little stronger
       if(masked & State_MouseOver)
-        backCol.setAlphaF(0.4);
+        backCol.setAlphaF(0.4f);
 
       p->fillRect(rect, QBrush(backCol));
     }
@@ -528,7 +528,7 @@ void RDTweakedNativeStyle::drawControl(ControlElement control, const QStyleOptio
       // elide text from the right if there's not enough space
       QFontMetrics metrics(toolopt->font);
 
-      int space = metrics.width(QLatin1Char(' '));
+      int space = metrics.horizontalAdvance(QLatin1Char(' '));
       textRect = QStyle::visualRect(opt->direction, rect, textRect);
 
       if(toolopt->toolButtonStyle == Qt::ToolButtonTextOnly)

@@ -3,10 +3,10 @@
     <BuildType Name="Development" />
     <BuildType Name="Release" />
     <Platform Name="x64" />
-    <Platform Name="x86" />
+    <Platform Name="ARM64" />
   </Configurations>
   <Folder Name="/DLL/">
-    <Project Path="renderdoc/renderdoc.vcxproj">
+    <Project Path="renderdoc/renderdoc.vcxproj" Id="e2b46d67-90e2-40b6-9597-72930e7845e5">
       <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/common.vcxproj" />
       <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_client.vcxproj" />
       <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_server.vcxproj" />
@@ -15,54 +15,54 @@
     </Project>
   </Folder>
   <Folder Name="/DLL/breakpad/">
-    <Project Path="renderdoc/3rdparty/breakpad/client/windows/common.vcxproj">
+    <Project Path="renderdoc/3rdparty/breakpad/client/windows/common.vcxproj" Id="ea1242cf-bb42-b1ac-9b6a-a508d96d1cb7">
       <Build Solution="Development|*" Project="false" />
     </Project>
-    <Project Path="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_client.vcxproj">
+    <Project Path="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_client.vcxproj" Id="ec847717-119a-2391-0477-212e1140082c">
       <Build Solution="Development|*" Project="false" />
     </Project>
-    <Project Path="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_server.vcxproj">
+    <Project Path="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_server.vcxproj" Id="7893e300-3ed0-7f4c-158f-67ea63934c57">
       <Build Solution="Development|*" Project="false" />
     </Project>
-    <Project Path="renderdoc/3rdparty/breakpad/client/windows/handler/exception_handler.vcxproj">
+    <Project Path="renderdoc/3rdparty/breakpad/client/windows/handler/exception_handler.vcxproj" Id="b7399f39-300f-450e-f471-9490f959d2a7">
       <Build Solution="Development|*" Project="false" />
     </Project>
   </Folder>
   <Folder Name="/DLL/drivers/">
-    <Project Path="renderdoc/driver/d3d11/renderdoc_d3d11.vcxproj" />
-    <Project Path="renderdoc/driver/d3d12/renderdoc_d3d12.vcxproj" />
-    <Project Path="renderdoc/driver/dxgi/renderdoc_dxgi.vcxproj" />
-    <Project Path="renderdoc/driver/gl/renderdoc_gl.vcxproj" />
-    <Project Path="renderdoc/driver/vulkan/renderdoc_vulkan.vcxproj" />
+    <Project Path="renderdoc/driver/d3d11/renderdoc_d3d11.vcxproj" Id="f1e59a05-60d4-4927-9e57-dd191eae90ef" />
+    <Project Path="renderdoc/driver/d3d12/renderdoc_d3d12.vcxproj" Id="9e6b10a2-84b4-434d-abdb-43be4ea650f4" />
+    <Project Path="renderdoc/driver/dxgi/renderdoc_dxgi.vcxproj" Id="2a793574-bd3c-46d4-9788-c339d9550ce1" />
+    <Project Path="renderdoc/driver/gl/renderdoc_gl.vcxproj" Id="f92fcda6-a261-4eec-9cd0-73a11fbcc459" />
+    <Project Path="renderdoc/driver/vulkan/renderdoc_vulkan.vcxproj" Id="88c5dac6-30a0-4cfd-af51-540a977d1f3f" />
   </Folder>
   <Folder Name="/DLL/drivers/IHV/">
-    <Project Path="renderdoc/driver/ihv/amd/AMD.vcxproj" />
-    <Project Path="renderdoc/driver/ihv/arm/ARM.vcxproj" />
-    <Project Path="renderdoc/driver/ihv/intel/Intel.vcxproj" />
-    <Project Path="renderdoc/driver/ihv/nv/NV.vcxproj" />
+    <Project Path="renderdoc/driver/ihv/amd/AMD.vcxproj" Id="5de5a561-548a-4dd7-90f0-06a2b39eae9a" />
+    <Project Path="renderdoc/driver/ihv/arm/ARM.vcxproj" Id="f9cce6ca-0ca3-4a22-9c7b-881369955e62" />
+    <Project Path="renderdoc/driver/ihv/intel/Intel.vcxproj" Id="7fcb5fc5-1dbd-4da6-83a0-6ba4e945bda5" />
+    <Project Path="renderdoc/driver/ihv/nv/NV.vcxproj" Id="40349ad9-5558-4df4-84e2-11934de90a11" />
   </Folder>
   <Folder Name="/DLL/drivers/shaders/">
-    <Project Path="renderdoc/driver/shaders/dxbc/renderdoc_dxbc.vcxproj" />
-    <Project Path="renderdoc/driver/shaders/dxil/renderdoc_dxil.vcxproj" />
-    <Project Path="renderdoc/driver/shaders/spirv/renderdoc_spirv.vcxproj" />
+    <Project Path="renderdoc/driver/shaders/dxbc/renderdoc_dxbc.vcxproj" Id="c43ff27e-a155-4852-88ec-5ce9334c07a8" />
+    <Project Path="renderdoc/driver/shaders/dxil/renderdoc_dxil.vcxproj" Id="8ae46ec2-ea46-441f-bee2-94097101d6a3" />
+    <Project Path="renderdoc/driver/shaders/spirv/renderdoc_spirv.vcxproj" Id="0aae0ad1-371b-4a36-9ed1-80e10e960605" />
   </Folder>
   <Folder Name="/UI/">
-    <Project Path="qrenderdoc/qrenderdoc_local.vcxproj" />
+    <Project Path="qrenderdoc/qrenderdoc_local.vcxproj" Id="a14a6ae5-02b1-35fe-be59-b3e7c273b40b" />
   </Folder>
   <Folder Name="/UI/Python Modules/">
-    <Project Path="qrenderdoc/Code/pyrenderdoc/pyrenderdoc_module.vcxproj" />
-    <Project Path="qrenderdoc/Code/pyrenderdoc/qrenderdoc_module.vcxproj" />
+    <Project Path="qrenderdoc/Code/pyrenderdoc/pyrenderdoc_module.vcxproj" Id="a8998b2d-652a-47f8-955b-5654b222b4eb" />
+    <Project Path="qrenderdoc/Code/pyrenderdoc/qrenderdoc_module.vcxproj" Id="61157930-78c3-4355-8b49-4cc91b98f17b" />
   </Folder>
   <Folder Name="/Utility/">
-    <Project Path="qrenderdoc/renderdocui_stub.vcxproj" />
-    <Project Path="renderdoc/renderdoc_version.vcxproj" />
-    <Project Path="renderdoccmd/renderdoccmd.vcxproj">
+    <Project Path="qrenderdoc/renderdocui_stub.vcxproj" Id="37955c79-d91d-423f-8c6c-8f5bcf4f28d4" />
+    <Project Path="renderdoc/renderdoc_version.vcxproj" Id="257fd75c-4d17-4a23-a754-23bfd85887a0" />
+    <Project Path="renderdoccmd/renderdoccmd.vcxproj" Id="d03df2f9-513c-4084-bbdd-1dee8d9250d7">
       <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/common.vcxproj" />
       <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_client.vcxproj" />
       <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/crash_generation/crash_generation_server.vcxproj" />
       <BuildDependency Project="renderdoc/3rdparty/breakpad/client/windows/handler/exception_handler.vcxproj" />
       <BuildDependency Project="renderdoc/renderdoc.vcxproj" />
     </Project>
-    <Project Path="renderdocshim/renderdocshim.vcxproj" />
+    <Project Path="renderdocshim/renderdocshim.vcxproj" Id="6dee3f12-f2f8-42ca-865a-578d0fd11387" />
   </Folder>
 </Solution>

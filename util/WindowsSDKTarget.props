@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 <!-- visual studio doesn't have a way to say "I don't care about the SDK version". Targetting an old version will explicitly fail on new SDKs for some stupid reason. So instead we try to target the latest windows 10 SDK or 8.1 if no windows 10 SDK is installed -->
 

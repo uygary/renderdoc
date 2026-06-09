@@ -1,3 +1,4 @@
+#pragma warning(disable: 4324)
 /*++ BUILD Version: 0000     Increment this if a change has global effects
 
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -4923,3 +4924,4 @@ MiniDumpReadDumpStream(
 #pragma endregion
 
 #endif // _DBGHELP_
+

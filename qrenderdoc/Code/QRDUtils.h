@@ -65,6 +65,7 @@ inline QString ToQStr(const T &el)
   return QString(ToStr(el));
 }
 
+
 // overloads for a couple of things that need to know the pipeline type when converting
 QString ToQStr(const ResourceUsage usage, const GraphicsAPI apitype);
 QString ToQStr(const ShaderStage stage, const GraphicsAPI apitype);

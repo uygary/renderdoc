@@ -145,20 +145,20 @@ public:
   void updateExpansion(RDTreeViewExpansionState &state, int keyColumn, int keyRole = Qt::DisplayRole)
   {
     updateExpansion(state, [keyColumn, keyRole](QModelIndex idx, uint seed) {
-      return qHash(idx.sibling(idx.row(), keyColumn).data(keyRole).toString(), seed);
+      return (uint)qHash(idx.sibling(idx.row(), keyColumn).data(keyRole).toString(), seed);
     });
   }
   void saveExpansion(RDTreeViewExpansionState &state, int keyColumn, int keyRole = Qt::DisplayRole)
   {
     saveExpansion(state, [keyColumn, keyRole](QModelIndex idx, uint seed) {
-      return qHash(idx.sibling(idx.row(), keyColumn).data(keyRole).toString(), seed);
+      return (uint)qHash(idx.sibling(idx.row(), keyColumn).data(keyRole).toString(), seed);
     });
   }
   void applyExpansion(const RDTreeViewExpansionState &state, int keyColumn,
                       int keyRole = Qt::DisplayRole)
   {
     applyExpansion(state, [keyColumn, keyRole](QModelIndex idx, uint seed) {
-      return qHash(idx.sibling(idx.row(), keyColumn).data(keyRole).toString(), seed);
+      return (uint)qHash(idx.sibling(idx.row(), keyColumn).data(keyRole).toString(), seed);
     });
   }
 

@@ -56,7 +56,9 @@ extern "C" {
 *  Target specific
 =========================================*/
 #if defined(__BMI__) && defined(__GNUC__)
+#ifndef _M_ARM64
 #  include <immintrin.h>   /* support for bextr (experimental) */
+#endif
 #endif
 
 #define STREAM_ACCUMULATOR_MIN_32  25

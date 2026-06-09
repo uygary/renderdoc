@@ -434,7 +434,7 @@ public:
   Qt::ItemFlags flags(const QModelIndex &index) const override
   {
     if(!index.isValid())
-      return 0;
+      return Qt::NoItemFlags;
 
     return QAbstractItemModel::flags(index);
   }
@@ -1284,6 +1284,7 @@ DescriptorViewer::DescriptorViewer(ICaptureContext &ctx, QWidget *parent)
 {
   ui->setupUi(this);
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   {
     static bool registered = false;
     if(!registered)
@@ -1292,6 +1293,7 @@ DescriptorViewer::DescriptorViewer(ICaptureContext &ctx, QWidget *parent)
       QMetaType::registerComparators<ButtonTag>();
     }
   }
+#endif
 
   m_Model = new DescriptorItemModel(ctx, *this, this);
 

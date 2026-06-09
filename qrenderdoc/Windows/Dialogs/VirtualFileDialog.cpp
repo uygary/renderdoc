@@ -27,7 +27,11 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QPushButton>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QRegularExpression>
+#else
 #include <QRegExp>
+#endif
 #include <QSortFilterProxyModel>
 #include "Code/ReplayManager.h"
 #include "Code/Resources.h"
@@ -794,8 +798,12 @@ void VirtualFileDialog::on_filename_keyPress(QKeyEvent *e)
 
   QString text = ui->filename->text();
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  QRegularExpression re(QRegularExpression::wildcardToRegularExpression(text));
+#else
   QRegExp re(text);
   re.setPatternSyntax(QRegExp::Wildcard);
+#endif
 
   int fileCount = m_FileProxy->rowCount(curDir);
   int matches = 0, dirmatches = 0;
@@ -809,7 +817,12 @@ void VirtualFileDialog::on_filename_keyPress(QKeyEvent *e)
 
     QString filename = m_FileProxy->data(file, RemoteFileModel::FileNameRole).toString();
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QRegularExpression exactRe(QRegularExpression::anchoredPattern(re.pattern()));
+    if(exactRe.match(filename).hasMatch())
+#else
     if(re.exactMatch(filename))
+#endif
     {
       idx = file;
       dirmatches += isDir ? 1 : 0;
@@ -846,7 +859,11 @@ void VirtualFileDialog::on_filename_keyPress(QKeyEvent *e)
     fileNotFound(text);
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  m_FileProxy->setFilterRegularExpression(re);
+#else
   m_FileProxy->setFilterRegExp(re);
+#endif
   m_FileProxy->refresh();
 }
 
@@ -867,7 +884,7 @@ void VirtualFileDialog::on_buttonBox_accepted()
   }
 
   // simulate enter being pressed
-  QKeyEvent fakeEvent(QEvent::KeyPress, Qt::Key_Return, 0);
+  QKeyEvent fakeEvent(QEvent::KeyPress, Qt::Key_Return, Qt::NoModifier);
   on_filename_keyPress(&fakeEvent);
 }
 

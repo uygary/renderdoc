@@ -663,7 +663,8 @@ void LiveCapture::updateAPIStatus()
     {
       apiStatus += tr(", %1 (Unsupported)").arg(api);
       if(!m_APIs[api].supportMessage.isEmpty())
-        apiStatus += lit("\n") + m_APIs[api].supportMessage;
+        apiStatus += lit("\n");
+        apiStatus += QString(m_APIs[api].supportMessage);
     }
     else if(!m_APIs[api].presenting)
     {
@@ -796,11 +797,11 @@ bool LiveCapture::checkAllowClose(int totalUnsavedCaptures, bool &noToAll)
           this, tr("No active replay context"),
           tr("This capture is on remote host %1 and there is no active replay context on that "
              "host.\n")
-                  .arg(m_HostFriendlyname) +
+                  .arg(m_HostFriendlyname).append(
               tr("Without an active replay context the capture cannot be %1.\n\n")
-                  .arg(tr(res == QMessageBox::Yes ? "saved" : "deleted")) +
+                  .arg(tr(res == QMessageBox::Yes ? "saved" : "deleted"))).append(
               tr("Would you like to continue and discard this capture and any others, to be left "
-                 "in the temporary folder on the remote machine?"),
+                 "in the temporary folder on the remote machine?")),
           RDDialog::YesNoCancel);
 
       if(res2 == QMessageBox::Yes)
@@ -924,10 +925,10 @@ bool LiveCapture::saveCapture(Capture *cap, QString path)
       RDDialog::critical(this, tr("No active replay context"),
                          tr("This capture is on remote host %1 and there is no active replay "
                             "context on that host.\n")
-                                 .arg(m_Hostname) +
+                                 .arg(m_Hostname).append(
                              tr("Without an active replay context the capture cannot be saved, "
                                 "try switching to a replay context on %1.")
-                                 .arg(m_Hostname));
+                                 .arg(m_Hostname)));
       return false;
     }
 

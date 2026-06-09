@@ -17,6 +17,10 @@
 #include <QPainter>
 #include <QHash>
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QStringConverter>
+#endif
+
 #ifdef SCI_NAMESPACE
 namespace Scintilla {
 #endif
@@ -59,7 +63,11 @@ private:
 	bool unicodeMode;
 	int codePage;
 	const char *codecName;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+	QStringDecoder *codec;
+#else
 	QTextCodec *codec;
+#endif
 
 public:
 	SurfaceImpl();

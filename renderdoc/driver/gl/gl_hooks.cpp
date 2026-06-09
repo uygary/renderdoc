@@ -198,6 +198,9 @@ bool FullyImplementedFunction(const char *funcname)
       !strcmp(funcname, "glObjectPtrLabelKHR") || !strcmp(funcname, "glGetObjectPtrLabelKHR");
 }
 
+#if defined(_MSC_VER) && defined(_M_ARM64)
+#pragma optimize("", on)
+#endif
 void *HookedGetProcAddress(const char *func, void *realFunc)
 {
 #define CheckFunction(function, aliasName)                \
@@ -271,6 +274,9 @@ static void GLHooked(void *handle, const char *libName)
 #endif
 }
 
+#if defined(_MSC_VER) && defined(_M_ARM64)
+#pragma optimize("", on)
+#endif
 void GLHook::RegisterHooks()
 {
 #if ENABLED(RDOC_ANDROID)
@@ -345,6 +351,9 @@ void GLHook::RegisterHooks()
 
 #endif
 }
+#if defined(_MSC_VER) && defined(_M_ARM64)
+#pragma optimize("", off)
+#endif
 
 #if ENABLED(RDOC_APPLE)
 

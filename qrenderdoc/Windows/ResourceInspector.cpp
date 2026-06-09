@@ -74,7 +74,7 @@ public:
   Qt::ItemFlags flags(const QModelIndex &index) const override
   {
     if(!index.isValid())
-      return 0;
+      return Qt::NoItemFlags;
 
     return QAbstractItemModel::flags(index);
   }
@@ -96,7 +96,7 @@ public:
           return QVariant::fromValue(desc.resourceId);
 
         if(role == FilterRole)
-          return ToQStr(desc.type) + lit(" ") + m_Ctx.GetResourceName(desc.resourceId);
+          return lit("%1 %2").arg(ToQStr(desc.type)).arg(m_Ctx.GetResourceName(desc.resourceId));
 
         if(role == LastAccessSortRole)
           return m_LastUse[desc.resourceId];
@@ -265,7 +265,7 @@ void ResourceInspector::Inspect(ResourceId id)
   ui->resourceName->show();
 
   if(m_Resource != ResourceId())
-    ui->initChunks->saveExpansion(ui->initChunks->getInternalExpansion(qHash(ToQStr(m_Resource))), 0);
+    ui->initChunks->saveExpansion(ui->initChunks->getInternalExpansion((uint)qHash(ToQStr(m_Resource))), 0);
 
   m_Resource = id;
 
@@ -425,7 +425,7 @@ void ResourceInspector::Inspect(ResourceId id)
   ui->initChunks->setUpdatesEnabled(true);
 
   if(m_Resource != ResourceId())
-    ui->initChunks->applyExpansion(ui->initChunks->getInternalExpansion(qHash(ToQStr(m_Resource))),
+    ui->initChunks->applyExpansion(ui->initChunks->getInternalExpansion((uint)qHash(ToQStr(m_Resource))),
                                    0);
 }
 
@@ -464,7 +464,7 @@ void ResourceInspector::RevealParameter(SDObject *param)
         if(current->GetChild(i) == next)
         {
           current = next;
-          item = parent.child((int)i, 0);
+          item = m_ChunksModel->index((int)i, 0, parent);
           break;
         }
       }
@@ -746,7 +746,11 @@ void ResourceInspector::resourceUsage_contextMenu(const QPoint &pos)
   RDDialog::show(&contextMenu, ui->resourceUsage->viewport()->mapToGlobal(pos));
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void ResourceInspector::enterEvent(QEnterEvent *event)
+#else
 void ResourceInspector::enterEvent(QEvent *event)
+#endif
 {
   HighlightUsage();
 }

@@ -6,8 +6,8 @@
 
   <CustomPythonUsed>0</CustomPythonUsed>
 
-  <!-- output file of python36.dll, python36.zip, python36.lib etc -->
-	<PythonMajorMinor>36</PythonMajorMinor>
+  <!-- output file of python314.dll, python314.zip, python314.lib etc -->
+	<PythonMajorMinor>314</PythonMajorMinor>
 
 	<PythonIncludeDir>$(PythonBase)\include</PythonIncludeDir>
 	<PythonImportLib>$(PythonBase)\$(Platform)\python$(PythonMajorMinor).lib</PythonImportLib>
@@ -45,6 +45,7 @@
 	<PythonOverride>$(VSPythonOverridePath)</PythonOverride>
 	<PythonOverride Condition="'$(VSPythonOverridePath)'=='' AND '$(Platform)'=='Win32'">$(RENDERDOC_PYTHON_PREFIX32)</PythonOverride>
 	<PythonOverride Condition="'$(VSPythonOverridePath)'=='' AND '$(Platform)'=='x64'">$(RENDERDOC_PYTHON_PREFIX64)</PythonOverride>
+	<PythonOverride Condition="'$(VSPythonOverridePath)'=='' AND '$(Platform)'=='ARM64'">$(RENDERDOC_PYTHON_PREFIXARM64)</PythonOverride>
 </PropertyGroup>
 
 <PropertyGroup><PythonMajorMinorTest>318</PythonMajorMinorTest></PropertyGroup>
