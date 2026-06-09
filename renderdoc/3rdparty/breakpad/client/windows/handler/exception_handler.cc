@@ -967,6 +967,8 @@ bool ExceptionHandler::WriteMinidumpWithExceptionForProcess(
           exinfo->ContextRecord->Eip;
 #elif defined(_M_AMD64)
         exinfo->ContextRecord->Rip;
+#elif defined(_M_ARM64)
+        exinfo->ContextRecord->Pc;
 #else
 #error Unsupported platform
 #endif
