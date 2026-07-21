@@ -303,6 +303,8 @@ void WrappedVulkan::ReplayQueueSubmit(VkQueue queue, VkSubmitInfo2 submitInfo, r
     for(uint32_t c = 0; c < numCmds; c++)
     {
       DoSubmit(queue, submitInfo);
+      // ensure we wait for the submit to finish before processing it
+      ObjDisp(queue)->QueueWaitIdle(Unwrap(queue));
       FlushQ();
 
       ResourceId cmd = GetResID(submitInfo.pCommandBufferInfos[0].commandBuffer);
@@ -1494,22 +1496,31 @@ bool WrappedVulkan::Serialise_vkQueueSubmit(SerialiserType &ser, VkQueue queue, 
     }
     if(submitCount == 0)
     {
-      AddEvent();
+      if(IsLoading(m_State))
+      {
+        AddEvent();
 
-      // we're adding multiple events, need to increment ourselves
-      m_RootEventID++;
+        // we're adding multiple events, need to increment ourselves
+        m_RootEventID++;
 
-      ObjDisp(queue)->QueueSubmit(Unwrap(queue), 0, NULL, VK_NULL_HANDLE);
+        ObjDisp(queue)->QueueSubmit(Unwrap(queue), 0, NULL, VK_NULL_HANDLE);
 
-      ActionDescription action;
-      action.customName = "=> vkQueueSubmit(): No Submit";
-      action.flags |= ActionFlags::CommandBufferBoundary | ActionFlags::PassBoundary;
-      AddEvent();
+        ActionDescription action;
+        action.customName = "=> vkQueueSubmit(): No Submit";
+        action.flags |= ActionFlags::CommandBufferBoundary | ActionFlags::PassBoundary;
+        AddEvent();
 
-      m_RootEvents.back().chunkIndex = APIEvent::NoChunk;
-      m_Events.back().chunkIndex = APIEvent::NoChunk;
+        m_RootEvents.back().chunkIndex = APIEvent::NoChunk;
+        m_Events.back().chunkIndex = APIEvent::NoChunk;
 
-      AddAction(action);
+        AddAction(action);
+      }
+      else
+      {
+        // account for the queue submit event
+        m_RootEventID++;
+        ObjDisp(queue)->QueueSubmit(Unwrap(queue), 0, NULL, VK_NULL_HANDLE);
+      }
     }
     else
     {
@@ -1687,22 +1698,30 @@ bool WrappedVulkan::Serialise_vkQueueSubmit2(SerialiserType &ser, VkQueue queue,
     }
     if(submitCount == 0)
     {
-      AddEvent();
+      if(IsLoading(m_State))
+      {
+        AddEvent();
 
-      // we're adding multiple events, need to increment ourselves
-      m_RootEventID++;
+        // we're adding multiple events, need to increment ourselves
+        m_RootEventID++;
 
-      ObjDisp(queue)->QueueSubmit2(Unwrap(queue), 0, NULL, VK_NULL_HANDLE);
+        ObjDisp(queue)->QueueSubmit2(Unwrap(queue), 0, NULL, VK_NULL_HANDLE);
 
-      ActionDescription action;
-      action.customName = "=> vkQueueSubmit2(): No Submit";
-      action.flags |= ActionFlags::CommandBufferBoundary | ActionFlags::PassBoundary;
-      AddEvent();
+        ActionDescription action;
+        action.customName = "=> vkQueueSubmit2(): No Submit";
+        action.flags |= ActionFlags::CommandBufferBoundary | ActionFlags::PassBoundary;
+        AddEvent();
 
-      m_RootEvents.back().chunkIndex = APIEvent::NoChunk;
-      m_Events.back().chunkIndex = APIEvent::NoChunk;
+        m_RootEvents.back().chunkIndex = APIEvent::NoChunk;
+        m_Events.back().chunkIndex = APIEvent::NoChunk;
 
-      AddAction(action);
+        AddAction(action);
+      }
+      else
+      {
+        // account for the queue submit event
+        m_RootEventID++;
+      }
     }
     else
     {

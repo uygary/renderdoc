@@ -5720,16 +5720,20 @@ bool WrappedVulkan::Serialise_vkCmdExecuteCommands(SerialiserType &ser, VkComman
               auto it = std::lower_bound(m_ActionUses.begin(), m_ActionUses.end(), use);
               if(it != m_ActionUses.end())
               {
-                uint32_t eventId = it->eventId + 2;
+                // Skip over the vkCmdExecuteCommands
+                uint32_t eventId = it->eventId + 1;
 
                 for(uint32_t i = 0; i < (uint32_t)rerecordedCmds.size(); i++)
                 {
                   ResourceId cmd = GetResID(pCommandBuffers[i]);
                   BakedCmdBufferInfo &info = m_BakedCmdBufferInfo[cmd];
-                  if(info.action && info.action->children.size() > 0)
+                  uint32_t eventCount = info.eventCount;
+                  // Skip over the virtual marker vkBeginCommandBuffer
+                  uint32_t firstEventId = eventId + 1;
+                  // firstEventId -> lastEventId is an inclusive range
+                  uint32_t lastEventId = firstEventId + eventCount - 1;
+                  if(eventCount > 0)
                   {
-                    uint32_t firstEventId = eventId + info.action->children.front().action.eventId;
-                    uint32_t lastEventId = eventId + info.action->children.back().action.eventId;
                     m_ActionCallback->PreCmdExecute(eventId, firstEventId, lastEventId,
                                                     commandBuffer);
                     ObjDisp(commandBuffer)
@@ -5743,7 +5747,8 @@ bool WrappedVulkan::Serialise_vkCmdExecuteCommands(SerialiserType &ser, VkComman
                         ->CmdExecuteCommands(Unwrap(commandBuffer), 1, &rerecordedCmds[i]);
                   }
 
-                  eventId += 2 + m_BakedCmdBufferInfo[cmd].eventCount;
+                  // Skip over the final event and virtual marker vkEndCommandBuffer
+                  eventId = lastEventId + 2;
                 }
               }
             }
@@ -10479,6 +10484,57 @@ void WrappedVulkan::vkCmdBeginCustomResolveEXT(
   }
 }
 
+template <typename SerialiserType>
+bool WrappedVulkan::Serialise_vkCmdSetCheckpointNV(SerialiserType &ser, VkCommandBuffer commandBuffer,
+                                                   const void *pCheckpointMarker)
+{
+  SERIALISE_ELEMENT(commandBuffer);
+  SERIALISE_ELEMENT_LOCAL(marker, (uint64_t)(uintptr_t)pCheckpointMarker)
+      .Important()
+      .OffsetOrSize()
+      .Named("pCheckpointMarker")
+      .TypedAs("void *"_lit);
+
+  if(IsReplayingAndReading())
+  {
+    m_LastCmdBufferID = GetResID(commandBuffer);
+
+    if(IsActiveReplaying(m_State))
+    {
+      if(InRerecordRange(m_LastCmdBufferID))
+        commandBuffer = RerecordCmdBuf(m_LastCmdBufferID);
+      else
+        commandBuffer = VK_NULL_HANDLE;
+    }
+
+    if(commandBuffer != VK_NULL_HANDLE)
+    {
+      ObjDisp(commandBuffer)->CmdSetCheckpointNV(Unwrap(commandBuffer), (void *)(uintptr_t)marker);
+    }
+  }
+  return true;
+}
+
+void WrappedVulkan::vkCmdSetCheckpointNV(VkCommandBuffer commandBuffer, const void *pCheckpointMarker)
+{
+  SCOPED_DBG_SINK();
+
+  SERIALISE_TIME_CALL(
+      ObjDisp(commandBuffer)->CmdSetCheckpointNV(Unwrap(commandBuffer), pCheckpointMarker));
+
+  if(IsCaptureMode(m_State))
+  {
+    VkResourceRecord *record = GetRecord(commandBuffer);
+
+    CACHE_THREAD_SERIALISER();
+    ser.SetActionChunk();
+    SCOPED_SERIALISE_CHUNK(VulkanChunk::vkCmdSetCheckpointNV);
+    Serialise_vkCmdSetCheckpointNV(ser, commandBuffer, pCheckpointMarker);
+
+    record->AddChunk(scope.Get(&record->cmdInfo->alloc));
+  }
+}
+
 INSTANTIATE_FUNCTION_SERIALISED(VkResult, vkCreateCommandPool, VkDevice device,
                                 const VkCommandPoolCreateInfo *pCreateInfo,
                                 const VkAllocationCallbacks *, VkCommandPool *pCommandPool);
@@ -10709,3 +10765,6 @@ INSTANTIATE_FUNCTION_SERIALISED(
 
 INSTANTIATE_FUNCTION_SERIALISED(void, vkCmdBeginCustomResolveEXT, VkCommandBuffer commandBuffer,
                                 const VkBeginCustomResolveInfoEXT *pBeginCustomResolveInfo);
+
+INSTANTIATE_FUNCTION_SERIALISED(void, vkCmdSetCheckpointNV, VkCommandBuffer commandBuffer,
+                                const void *pCheckpointMarker);

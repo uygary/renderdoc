@@ -18,7 +18,7 @@
       <Platform>ARM64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <PropertyGroup Label="Globals"><PreferredToolArchitecture>x64</PreferredToolArchitecture><PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  <PropertyGroup Label="Globals"><PreferredToolArchitecture>x64</PreferredToolArchitecture>
     <UseNativeEnvironment>true</UseNativeEnvironment>
     <ProjectGuid>{E2B46D67-90E2-40B6-9597-72930E7845E5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -31,7 +31,6 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
     <LinkIncremental>false</LinkIncremental>

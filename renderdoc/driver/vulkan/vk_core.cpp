@@ -2042,6 +2042,14 @@ static const VkExtensionProperties supportedExtensions[] = {
         VK_NV_DEDICATED_ALLOCATION_SPEC_VERSION,
     },
     {
+        VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME,
+        VK_NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_SPEC_VERSION,
+    },
+    {
+        VK_NV_DEVICE_DIAGNOSTICS_CONFIG_EXTENSION_NAME,
+        VK_NV_DEVICE_DIAGNOSTICS_CONFIG_SPEC_VERSION,
+    },
+    {
         VK_NV_EXTERNAL_MEMORY_EXTENSION_NAME,
         VK_NV_EXTERNAL_MEMORY_SPEC_VERSION,
     },
@@ -4951,6 +4959,9 @@ bool WrappedVulkan::ProcessChunk(ReadSerialiser &ser, VulkanChunk chunk)
       return Serialise_SetCommandAnnotation(ser, VK_NULL_HANDLE, rdcstr(), eRENDERDOC_AnnotationMax,
                                             0, RENDERDOC_AnnotationValue());
 
+    case VulkanChunk::vkCmdSetCheckpointNV:
+      return Serialise_vkCmdSetCheckpointNV(ser, VK_NULL_HANDLE, NULL);
+
     // chunks that are reserved but not yet serialised
     case VulkanChunk::vkResetCommandPool:
     case VulkanChunk::vkCreateDepthTargetView:
@@ -6006,6 +6017,7 @@ void WrappedVulkan::AddForcedReference(VkResourceRecord *record)
 
 void WrappedVulkan::AddAction(const ActionDescription &a)
 {
+  RDCASSERT(IsLoading(m_State));
   m_AddedAction = true;
 
   ActionDescription action = a;
@@ -6687,6 +6699,7 @@ void WrappedVulkan::AddFramebufferUsageAllChildren(VulkanActionTreeNode &actionN
 
 void WrappedVulkan::AddEvent()
 {
+  RDCASSERT(IsLoading(m_State));
   APIEvent apievent;
 
   apievent.fileOffset = m_CurChunkOffset;
