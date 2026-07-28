@@ -93,15 +93,17 @@
     <!-- QtBaseDir would be used for everything, except in our local repository copy of Qt
          we only have one include and split the bin/lib by platform. Since include doesn't
          vary by platform and can be deduplicated on disk. -->
-    <QtBaseDir>D:\ENT\renderdoc\qrenderdoc\3rdparty\qt\ARM64\6.5.2\msvc2019_arm64</QtBaseDir>
-    <QtIncludeDir>D:\ENT\renderdoc\qrenderdoc\3rdparty\qt\ARM64\6.5.2\msvc2019_arm64\include</QtIncludeDir>
+    <QtBaseDir>$(SolutionDir)\qrenderdoc\3rdparty\qt\x64\6.5.2\msvc2019_64</QtBaseDir>
+    <QtIncludeDir>$(SolutionDir)\qrenderdoc\3rdparty\qt\x64\6.5.2\msvc2019_64\include</QtIncludeDir>
+    <QtBaseDir Condition="'$(Platform)'=='ARM64'">$(SolutionDir)\qrenderdoc\3rdparty\qt\ARM64\6.5.2\msvc2019_arm64</QtBaseDir>
+    <QtIncludeDir Condition="'$(Platform)'=='ARM64'">$(SolutionDir)\qrenderdoc\3rdparty\qt\ARM64\6.5.2\msvc2019_arm64\include</QtIncludeDir>
     <QtBaseDir Condition="Exists('$(RENDERDOC_QT_PREFIX64)\bin\moc.exe') AND '$(Platform)'=='x64'">$(RENDERDOC_QT_PREFIX64)</QtBaseDir>
     <QtIncludeDir Condition="Exists('$(RENDERDOC_QT_PREFIX64)\bin\moc.exe') AND '$(Platform)'=='x64'">$(RENDERDOC_QT_PREFIX64)\include</QtIncludeDir>
     <QtBaseDir Condition="Exists('$(RENDERDOC_QT_PREFIX32)\bin\moc.exe') AND '$(Platform)'=='Win32'">$(RENDERDOC_QT_PREFIX32)</QtBaseDir>
     <QtIncludeDir Condition="Exists('$(RENDERDOC_QT_PREFIX32)\bin\moc.exe') AND '$(Platform)'=='Win32'">$(RENDERDOC_QT_PREFIX32)\include</QtIncludeDir>
     <!-- bin and lib are relative to the base dir, wherever it is -->
     <QtBinDir>$(QtBaseDir)\bin</QtBinDir>
-    <QtHostBinDir>D:\ENT\renderdoc\qrenderdoc\3rdparty\qt\x64\6.5.2\msvc2019_64\bin</QtHostBinDir>
+    <QtHostBinDir>$(SolutionDir)\qrenderdoc\3rdparty\qt\x64\6.5.2\msvc2019_64\bin</QtHostBinDir>
     <QtLibDir>$(QtBaseDir)\lib</QtLibDir>
     <QtPluginsDir>$(QtBaseDir)\plugins</QtPluginsDir>
   </PropertyGroup>
