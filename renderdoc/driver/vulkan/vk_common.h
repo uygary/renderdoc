@@ -76,6 +76,9 @@
 #define VkFormatFeatureFlagBits2 VkFormatFeatureFlagBits2_VkFlags64_typedef
 #define VkBufferUsageFlagBits2 VkBufferUsageFlagBits2_VkFlags64_typedef
 #define VkPipelineCreateFlagBits2 VkPipelineCreateFlagBits2_VkFlags64_typedef
+#define VkFormatFeatureFlagBits4KHR VkFormatFeatureFlagBits4KHR_VkFlags64_typedef
+#define VkImageUsageFlagBits2KHR VkImageUsageFlagBits2KHR_VkFlags64_typedef
+#define VkImageCreateFlagBits2KHR VkImageUsageFlagBits2KHR_VkFlags64_typedef
 
 #include "core/core.h"
 #include "core/resource_manager.h"
@@ -90,6 +93,9 @@
 #undef VkFormatFeatureFlagBits2
 #undef VkBufferUsageFlagBits2
 #undef VkPipelineCreateFlagBits2
+#undef VkFormatFeatureFlagBits4KHR
+#undef VkImageUsageFlagBits2KHR
+#undef VkImageCreateFlagBits2KHR
 
 #undef Bool
 #undef None
@@ -141,17 +147,17 @@ VkShaderStageFlags ShaderMaskFromIndex(size_t index);
 
 // Generic getter/setter helpers to handle optional 64 flag structs in the pNext chain
 template <typename ParentStruct>
-uint64_t GetBufferUsageFlags(const ParentStruct *info)
+VkBufferUsageFlags2 GetBufferUsageFlags(const ParentStruct *info)
 {
   const VkBufferUsageFlags2CreateInfo *usage2 = (const VkBufferUsageFlags2CreateInfo *)FindNextStruct(
       info, VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO);
   if(usage2)
     return usage2->usage;
-  return info->usage;
+  return (VkBufferUsageFlags2)info->usage;
 }
 
 template <typename ParentStruct>
-void SetBufferUsageFlags(ParentStruct *info, uint64_t usage)
+void SetBufferUsageFlags(ParentStruct *info, VkBufferUsageFlags2 usage)
 {
   VkBufferUsageFlags2CreateInfo *usage2 = (VkBufferUsageFlags2CreateInfo *)FindNextStruct(
       info, VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO);
@@ -161,6 +167,78 @@ void SetBufferUsageFlags(ParentStruct *info, uint64_t usage)
     return;
   }
   info->usage = (VkBufferUsageFlags)usage;
+}
+
+template <typename ParentStruct>
+VkImageUsageFlags2KHR GetImageUsageFlags(const ParentStruct *info)
+{
+  const VkImageUsageFlags2CreateInfoKHR *usage2 =
+      (const VkImageUsageFlags2CreateInfoKHR *)FindNextStruct(
+          info, VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR);
+  if(usage2)
+    return usage2->usage;
+  return (VkImageUsageFlags2KHR)info->usage;
+}
+
+template <typename ParentStruct>
+void SetImageUsageFlags(ParentStruct *info, VkImageUsageFlags2KHR usage)
+{
+  VkImageUsageFlags2CreateInfoKHR *usage2 = (VkImageUsageFlags2CreateInfoKHR *)FindNextStruct(
+      info, VK_STRUCTURE_TYPE_IMAGE_USAGE_FLAGS_2_CREATE_INFO_KHR);
+  if(usage2)
+  {
+    usage2->usage = usage;
+    return;
+  }
+  info->usage = (VkImageUsageFlags)usage;
+}
+
+template <typename ParentStruct>
+VkImageUsageFlags2KHR GetImageViewUsageFlags(const ParentStruct *info)
+{
+  const VkImageViewUsage2CreateInfoKHR *usage2 =
+      (const VkImageViewUsage2CreateInfoKHR *)FindNextStruct(
+          info, VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_2_CREATE_INFO_KHR);
+  if(usage2)
+    return usage2->usage;
+  return (VkImageUsageFlags2KHR)info->usage;
+}
+
+template <typename ParentStruct>
+void SetImageViewUsageFlags(ParentStruct *info, VkImageUsageFlags2KHR usage)
+{
+  VkImageViewUsage2CreateInfoKHR *usage2 = (VkImageViewUsage2CreateInfoKHR *)FindNextStruct(
+      info, VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_2_CREATE_INFO_KHR);
+  if(usage2)
+  {
+    usage2->usage = usage;
+    return;
+  }
+  info->usage = (VkImageUsageFlags)usage;
+}
+
+template <typename ParentStruct>
+VkImageCreateFlags2KHR GetImageCreateFlags(const ParentStruct *info)
+{
+  const VkImageCreateFlags2CreateInfoKHR *create2 =
+      (const VkImageCreateFlags2CreateInfoKHR *)FindNextStruct(
+          info, VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR);
+  if(create2)
+    return create2->flags;
+  return (VkImageCreateFlags2KHR)info->flags;
+}
+
+template <typename ParentStruct>
+void SetImageCreateFlags(ParentStruct *info, VkImageCreateFlags2KHR flags)
+{
+  VkImageCreateFlags2CreateInfoKHR *create2 = (VkImageCreateFlags2CreateInfoKHR *)FindNextStruct(
+      info, VK_STRUCTURE_TYPE_IMAGE_CREATE_FLAGS_2_CREATE_INFO_KHR);
+  if(create2)
+  {
+    create2->flags = flags;
+    return;
+  }
+  info->flags = (VkImageCreateFlags)flags;
 }
 
 template <typename ParentStruct>
@@ -1411,6 +1489,7 @@ enum class VulkanChunk : uint32_t
   SetCommandAnnotation,
   vkCmdBeginCustomResolveEXT,
   vkCmdSetCheckpointNV,
+  vkCmdSetDepthBias2EXT,
   Max,
 };
 
@@ -1540,6 +1619,8 @@ DECLARE_REFLECTION_STRUCT(VkDedicatedAllocationBufferCreateInfoNV);
 DECLARE_REFLECTION_STRUCT(VkDedicatedAllocationImageCreateInfoNV);
 DECLARE_REFLECTION_STRUCT(VkDedicatedAllocationMemoryAllocateInfoNV);
 DECLARE_REFLECTION_STRUCT(VkDependencyInfo);
+DECLARE_REFLECTION_STRUCT(VkDepthBiasInfoEXT);
+DECLARE_REFLECTION_STRUCT(VkDepthBiasRepresentationInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkDescriptorAddressInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkDescriptorBufferBindingInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkDescriptorBufferBindingPushDescriptorBufferHandleEXT);
@@ -1601,6 +1682,7 @@ DECLARE_REFLECTION_STRUCT(VkFenceGetFdInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkFilterCubicImageViewImageFormatPropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkFormatProperties2);
 DECLARE_REFLECTION_STRUCT(VkFormatProperties3);
+DECLARE_REFLECTION_STRUCT(VkFormatProperties4KHR);
 DECLARE_REFLECTION_STRUCT(VkFragmentShadingRateAttachmentInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkFramebufferAttachmentImageInfo);
 DECLARE_REFLECTION_STRUCT(VkFramebufferAttachmentsCreateInfo);
@@ -1616,6 +1698,7 @@ DECLARE_REFLECTION_STRUCT(VkImageCompressionControlEXT);
 DECLARE_REFLECTION_STRUCT(VkImageCompressionPropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkImageCopy2);
 DECLARE_REFLECTION_STRUCT(VkImageCreateInfo);
+DECLARE_REFLECTION_STRUCT(VkImageCreateFlags2CreateInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkImageDrmFormatModifierExplicitCreateInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkImageDrmFormatModifierListCreateInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkImageDrmFormatModifierPropertiesEXT);
@@ -1628,18 +1711,23 @@ DECLARE_REFLECTION_STRUCT(VkImagePlaneMemoryRequirementsInfo);
 DECLARE_REFLECTION_STRUCT(VkImageResolve2);
 DECLARE_REFLECTION_STRUCT(VkImageSparseMemoryRequirementsInfo2);
 DECLARE_REFLECTION_STRUCT(VkImageStencilUsageCreateInfo);
+DECLARE_REFLECTION_STRUCT(VkImageStencilUsage2CreateInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkImageSubresource2);
 DECLARE_REFLECTION_STRUCT(VkImageSwapchainCreateInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkImageToMemoryCopy);
+DECLARE_REFLECTION_STRUCT(VkImageUsageFlags2CreateInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkImageViewASTCDecodeModeEXT);
 DECLARE_REFLECTION_STRUCT(VkImageViewCaptureDescriptorDataInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkImageViewCreateInfo);
 DECLARE_REFLECTION_STRUCT(VkImageViewMinLodCreateInfoEXT);
+DECLARE_REFLECTION_STRUCT(VkImageViewSlicedCreateInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkImageViewUsageCreateInfo);
+DECLARE_REFLECTION_STRUCT(VkImageViewUsage2CreateInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkImportFenceFdInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkImportMemoryFdInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkImportSemaphoreFdInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkInstanceCreateInfo);
+DECLARE_REFLECTION_STRUCT(VkLayerSettingsCreateInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkLayerDeviceCreateInfo);
 DECLARE_REFLECTION_STRUCT(VkLayerInstanceCreateInfo);
 DECLARE_REFLECTION_STRUCT(VkMappedMemoryRange);
@@ -1662,6 +1750,9 @@ DECLARE_REFLECTION_STRUCT(VkMultisampledRenderToSingleSampledInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkMultisamplePropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkMutableDescriptorTypeCreateInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkOpaqueCaptureDescriptorDataCreateInfoEXT);
+DECLARE_REFLECTION_STRUCT(VkPastPresentationTimingEXT);
+DECLARE_REFLECTION_STRUCT(VkPastPresentationTimingInfoEXT);
+DECLARE_REFLECTION_STRUCT(VkPastPresentationTimingPropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkPastPresentationTimingGOOGLE);
 DECLARE_REFLECTION_STRUCT(VkPerformanceCounterDescriptionKHR);
 DECLARE_REFLECTION_STRUCT(VkPerformanceCounterKHR);
@@ -1686,6 +1777,7 @@ DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceConservativeRasterizationPropertiesEXT
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceCustomBorderColorFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceCustomBorderColorPropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceCustomResolveFeaturesEXT);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceDepthBiasControlFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceDepthClampZeroOneFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceDepthClipControlFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceDepthClipEnableFeaturesEXT);
@@ -1705,6 +1797,7 @@ DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceExtendedDynamicState2FeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceExtendedDynamicState3FeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceExtendedDynamicState3PropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceExtendedDynamicStateFeaturesEXT);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceExtendedFlagsFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceExternalBufferInfo);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceExternalFenceInfo);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceExternalImageFormatInfo);
@@ -1742,6 +1835,7 @@ DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceImagelessFramebufferFeatures);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceImageRobustnessFeatures);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceImageViewImageFormatInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceImageViewMinLodFeaturesEXT);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceIndexTypeUint8Features);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceInlineUniformBlockFeatures);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceInlineUniformBlockProperties);
@@ -1777,6 +1871,7 @@ DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceNestedCommandBufferPropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePCIBusInfoPropertiesEXT);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceDrmPropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePerformanceQueryFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePerformanceQueryPropertiesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePipelineCreationCacheControlFeatures);
@@ -1788,6 +1883,7 @@ DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePointClippingProperties);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePresentId2FeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePresentIdFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePresentModeFifoLatestReadyFeaturesKHR);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePresentTimingFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePresentWait2FeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePresentWaitFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT);
@@ -1801,6 +1897,10 @@ DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceProvokingVertexPropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDevicePushDescriptorProperties);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceRayQueryFeaturesKHR);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceRayTracingInvocationReorderPropertiesNV);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceRayTracingPipelineFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceRayTracingPipelinePropertiesKHR);
@@ -1813,17 +1913,22 @@ DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceSamplerFilterMinmaxProperties);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceSamplerYcbcrConversionFeatures);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceScalarBlockLayoutFeatures);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShader64BitIndexingFeaturesEXT);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderAbortFeaturesKHR);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderAbortPropertiesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderAtomicFloatFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderAtomicInt64Features);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderBfloat16FeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderClockFeaturesKHR);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderConstantDataFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderCorePropertiesAMD);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderDrawParametersFeatures);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderExpectAssumeFeatures);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderFloat16Int8Features);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderFloatControls2Features);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderFmaFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderImageFootprintFeaturesNV);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderIntegerDotProductFeatures);
@@ -1833,10 +1938,15 @@ DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderObjectFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderObjectPropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderQuadControlFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderSplitBarrierFeaturesEXT);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderSplitBarrierPropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderSubgroupRotateFeatures);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderTerminateInvocationFeatures);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderTileImageFeaturesEXT);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceShaderTileImagePropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceSparseImageFormatInfo2);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceSubgroupProperties);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceSubgroupSizeControlFeatures);
@@ -1872,6 +1982,7 @@ DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceVulkanMemoryModelFeatures);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceYcbcrImageArraysFeaturesEXT);
+DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceZeroInitializeDeviceMemoryFeaturesEXT);
 DECLARE_REFLECTION_STRUCT(VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures);
 DECLARE_REFLECTION_STRUCT(VkPipelineCacheCreateInfo);
 DECLARE_REFLECTION_STRUCT(VkPipelineColorBlendStateCreateInfo);
@@ -1913,8 +2024,12 @@ DECLARE_REFLECTION_STRUCT(VkPresentId2KHR);
 DECLARE_REFLECTION_STRUCT(VkPresentIdKHR);
 DECLARE_REFLECTION_STRUCT(VkPresentInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkPresentRegionsKHR);
+DECLARE_REFLECTION_STRUCT(VkPresentStageTimeEXT);
 DECLARE_REFLECTION_STRUCT(VkPresentTimeGOOGLE);
 DECLARE_REFLECTION_STRUCT(VkPresentTimesInfoGOOGLE);
+DECLARE_REFLECTION_STRUCT(VkPresentTimingInfoEXT);
+DECLARE_REFLECTION_STRUCT(VkPresentTimingsInfoEXT);
+DECLARE_REFLECTION_STRUCT(VkPresentTimingSurfaceCapabilitiesEXT);
 DECLARE_REFLECTION_STRUCT(VkPresentWait2InfoKHR);
 DECLARE_REFLECTION_STRUCT(VkPrivateDataSlotCreateInfo);
 DECLARE_REFLECTION_STRUCT(VkProtectedSubmitInfo);
@@ -1971,6 +2086,7 @@ DECLARE_REFLECTION_STRUCT(VkShaderCreateInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkShaderModuleCreateInfo);
 DECLARE_REFLECTION_STRUCT(VkShaderModuleValidationCacheCreateInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkSharedPresentSurfaceCapabilitiesKHR);
+DECLARE_REFLECTION_STRUCT(VkSharedPresentSurfaceCapabilities2KHR);
 DECLARE_REFLECTION_STRUCT(VkSparseImageFormatProperties2);
 DECLARE_REFLECTION_STRUCT(VkSparseImageMemoryRequirements2);
 DECLARE_REFLECTION_STRUCT(VkSubmitInfo);
@@ -1993,6 +2109,7 @@ DECLARE_REFLECTION_STRUCT(VkSurfacePresentModeCompatibilityKHR);
 DECLARE_REFLECTION_STRUCT(VkSurfacePresentModeKHR);
 DECLARE_REFLECTION_STRUCT(VkSurfacePresentScalingCapabilitiesKHR);
 DECLARE_REFLECTION_STRUCT(VkSurfaceProtectedCapabilitiesKHR);
+DECLARE_REFLECTION_STRUCT(VkSwapchainCalibratedTimestampInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkSwapchainCounterCreateInfoEXT);
 DECLARE_REFLECTION_STRUCT(VkSwapchainCreateInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkSwapchainDisplayNativeHdrCreateInfoAMD);
@@ -2000,6 +2117,8 @@ DECLARE_REFLECTION_STRUCT(VkSwapchainPresentFenceInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkSwapchainPresentModeInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkSwapchainPresentModesCreateInfoKHR);
 DECLARE_REFLECTION_STRUCT(VkSwapchainPresentScalingCreateInfoKHR);
+DECLARE_REFLECTION_STRUCT(VkSwapchainTimeDomainPropertiesEXT);
+DECLARE_REFLECTION_STRUCT(VkSwapchainTimingPropertiesEXT);
 DECLARE_REFLECTION_STRUCT(VkTextureLODGatherFormatPropertiesAMD);
 DECLARE_REFLECTION_STRUCT(VkTimelineSemaphoreSubmitInfo);
 DECLARE_REFLECTION_STRUCT(VkValidationCacheCreateInfoEXT);
@@ -2088,6 +2207,8 @@ DECLARE_DESERIALISE_TYPE(VkDedicatedAllocationBufferCreateInfoNV);
 DECLARE_DESERIALISE_TYPE(VkDedicatedAllocationImageCreateInfoNV);
 DECLARE_DESERIALISE_TYPE(VkDedicatedAllocationMemoryAllocateInfoNV);
 DECLARE_DESERIALISE_TYPE(VkDependencyInfo);
+DECLARE_DESERIALISE_TYPE(VkDepthBiasInfoEXT);
+DECLARE_DESERIALISE_TYPE(VkDepthBiasRepresentationInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkDescriptorAddressInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkDescriptorBufferBindingInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkDescriptorBufferBindingPushDescriptorBufferHandleEXT);
@@ -2149,6 +2270,7 @@ DECLARE_DESERIALISE_TYPE(VkFenceGetFdInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkFilterCubicImageViewImageFormatPropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkFormatProperties2);
 DECLARE_DESERIALISE_TYPE(VkFormatProperties3);
+DECLARE_DESERIALISE_TYPE(VkFormatProperties4KHR);
 DECLARE_DESERIALISE_TYPE(VkFragmentShadingRateAttachmentInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkFramebufferAttachmentImageInfo);
 DECLARE_DESERIALISE_TYPE(VkFramebufferAttachmentsCreateInfo);
@@ -2163,6 +2285,7 @@ DECLARE_DESERIALISE_TYPE(VkImageCompressionControlEXT);
 DECLARE_DESERIALISE_TYPE(VkImageCompressionPropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkImageCopy2);
 DECLARE_DESERIALISE_TYPE(VkImageCreateInfo);
+DECLARE_DESERIALISE_TYPE(VkImageCreateFlags2CreateInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkImageDrmFormatModifierExplicitCreateInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkImageDrmFormatModifierListCreateInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkImageDrmFormatModifierPropertiesEXT);
@@ -2175,18 +2298,23 @@ DECLARE_DESERIALISE_TYPE(VkImagePlaneMemoryRequirementsInfo);
 DECLARE_DESERIALISE_TYPE(VkImageResolve2);
 DECLARE_DESERIALISE_TYPE(VkImageSparseMemoryRequirementsInfo2);
 DECLARE_DESERIALISE_TYPE(VkImageStencilUsageCreateInfo);
+DECLARE_DESERIALISE_TYPE(VkImageStencilUsage2CreateInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkImageSubresource2);
 DECLARE_DESERIALISE_TYPE(VkImageSwapchainCreateInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkImageToMemoryCopy);
+DECLARE_DESERIALISE_TYPE(VkImageUsageFlags2CreateInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkImageViewASTCDecodeModeEXT);
 DECLARE_DESERIALISE_TYPE(VkImageViewCaptureDescriptorDataInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkImageViewCreateInfo);
 DECLARE_DESERIALISE_TYPE(VkImageViewMinLodCreateInfoEXT);
+DECLARE_DESERIALISE_TYPE(VkImageViewSlicedCreateInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkImageViewUsageCreateInfo);
+DECLARE_DESERIALISE_TYPE(VkImageViewUsage2CreateInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkImportFenceFdInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkImportMemoryFdInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkImportSemaphoreFdInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkInstanceCreateInfo);
+DECLARE_DESERIALISE_TYPE(VkLayerSettingsCreateInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkLayerDeviceCreateInfo);
 DECLARE_DESERIALISE_TYPE(VkLayerInstanceCreateInfo);
 DECLARE_DESERIALISE_TYPE(VkMappedMemoryRange);
@@ -2209,6 +2337,10 @@ DECLARE_DESERIALISE_TYPE(VkMultisampledRenderToSingleSampledInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkMultisamplePropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkMutableDescriptorTypeCreateInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkOpaqueCaptureDescriptorDataCreateInfoEXT);
+DECLARE_DESERIALISE_TYPE(VkPastPresentationTimingEXT);
+DECLARE_DESERIALISE_TYPE(VkPastPresentationTimingInfoEXT);
+DECLARE_DESERIALISE_TYPE(VkPastPresentationTimingPropertiesEXT);
+DECLARE_DESERIALISE_TYPE(VkPastPresentationTimingGOOGLE);
 DECLARE_DESERIALISE_TYPE(VkPerformanceCounterDescriptionKHR);
 DECLARE_DESERIALISE_TYPE(VkPerformanceCounterKHR);
 DECLARE_DESERIALISE_TYPE(VkPerformanceQuerySubmitInfoKHR);
@@ -2229,6 +2361,7 @@ DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceConditionalRenderingFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceConservativeRasterizationPropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceCustomBorderColorFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceCustomBorderColorPropertiesEXT);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceDepthBiasControlFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceDepthClampZeroOneFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceDepthClipControlFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceDepthClipEnableFeaturesEXT);
@@ -2248,6 +2381,7 @@ DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceExtendedDynamicState2FeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceExtendedDynamicState3FeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceExtendedDynamicState3PropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceExtendedDynamicStateFeaturesEXT);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceExtendedFlagsFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceExternalBufferInfo);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceExternalFenceInfo);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceExternalImageFormatInfo);
@@ -2285,6 +2419,7 @@ DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceImagelessFramebufferFeatures);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceImageRobustnessFeatures);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceImageViewImageFormatInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceImageViewMinLodFeaturesEXT);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceImageSlicedViewOf3DFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceIndexTypeUint8Features);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceInlineUniformBlockFeatures);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceInlineUniformBlockProperties);
@@ -2320,6 +2455,7 @@ DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceNestedCommandBufferPropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceNonSeamlessCubeMapFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePageableDeviceLocalMemoryFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePCIBusInfoPropertiesEXT);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceDrmPropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePerformanceQueryFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePerformanceQueryPropertiesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePipelineCreationCacheControlFeatures);
@@ -2331,6 +2467,7 @@ DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePointClippingProperties);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePresentId2FeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePresentIdFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePresentModeFifoLatestReadyFeaturesKHR);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePresentTimingFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePresentWait2FeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePresentWaitFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePrimitivesGeneratedQueryFeaturesEXT);
@@ -2344,6 +2481,10 @@ DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceProvokingVertexPropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDevicePushDescriptorProperties);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceRasterizationOrderAttachmentAccessFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceRayQueryFeaturesKHR);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceRayTracingInvocationReorderFeaturesEXT);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceRayTracingInvocationReorderFeaturesNV);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceRayTracingInvocationReorderPropertiesEXT);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceRayTracingInvocationReorderPropertiesNV);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceRayTracingMaintenance1FeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceRayTracingPipelineFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceRayTracingPipelinePropertiesKHR);
@@ -2356,17 +2497,22 @@ DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceSamplerFilterMinmaxProperties);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceSamplerYcbcrConversionFeatures);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceScalarBlockLayoutFeatures);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceSeparateDepthStencilLayoutsFeatures);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShader64BitIndexingFeaturesEXT);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderAbortFeaturesKHR);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderAbortPropertiesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderAtomicFloat2FeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderAtomicFloatFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderAtomicInt64Features);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderBfloat16FeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderClockFeaturesKHR);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderConstantDataFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderCorePropertiesAMD);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderDemoteToHelperInvocationFeatures);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderDrawParametersFeatures);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderExpectAssumeFeatures);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderFloat16Int8Features);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderFloatControls2Features);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderFmaFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderImageAtomicInt64FeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderImageFootprintFeaturesNV);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderIntegerDotProductFeatures);
@@ -2376,10 +2522,15 @@ DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderObjectFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderObjectPropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderQuadControlFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderSplitBarrierFeaturesEXT);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderSplitBarrierPropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderSubgroupExtendedTypesFeatures);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderSubgroupPartitionedFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderSubgroupRotateFeatures);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderSubgroupUniformControlFlowFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderTerminateInvocationFeatures);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderTileImageFeaturesEXT);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceShaderTileImagePropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceSparseImageFormatInfo2);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceSubgroupProperties);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceSubgroupSizeControlFeatures);
@@ -2415,6 +2566,7 @@ DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceVulkanMemoryModelFeatures);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceWorkgroupMemoryExplicitLayoutFeaturesKHR);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceYcbcr2Plane444FormatsFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceYcbcrImageArraysFeaturesEXT);
+DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceZeroInitializeDeviceMemoryFeaturesEXT);
 DECLARE_DESERIALISE_TYPE(VkPhysicalDeviceZeroInitializeWorkgroupMemoryFeatures);
 DECLARE_DESERIALISE_TYPE(VkPipelineCacheCreateInfo);
 DECLARE_DESERIALISE_TYPE(VkPipelineColorBlendStateCreateInfo);
@@ -2456,7 +2608,12 @@ DECLARE_DESERIALISE_TYPE(VkPresentId2KHR);
 DECLARE_DESERIALISE_TYPE(VkPresentIdKHR);
 DECLARE_DESERIALISE_TYPE(VkPresentInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkPresentRegionsKHR);
+DECLARE_DESERIALISE_TYPE(VkPresentStageTimeEXT);
+DECLARE_DESERIALISE_TYPE(VkPresentTimeGOOGLE);
 DECLARE_DESERIALISE_TYPE(VkPresentTimesInfoGOOGLE);
+DECLARE_DESERIALISE_TYPE(VkPresentTimingInfoEXT);
+DECLARE_DESERIALISE_TYPE(VkPresentTimingsInfoEXT);
+DECLARE_DESERIALISE_TYPE(VkPresentTimingSurfaceCapabilitiesEXT);
 DECLARE_DESERIALISE_TYPE(VkPresentWait2InfoKHR);
 DECLARE_DESERIALISE_TYPE(VkPrivateDataSlotCreateInfo);
 DECLARE_DESERIALISE_TYPE(VkProtectedSubmitInfo);
@@ -2473,6 +2630,7 @@ DECLARE_DESERIALISE_TYPE(VkQueueFamilyProperties2);
 DECLARE_DESERIALISE_TYPE(VkRayTracingPipelineCreateInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkRayTracingPipelineInterfaceCreateInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkRayTracingShaderGroupCreateInfoKHR);
+DECLARE_DESERIALISE_TYPE(VkRefreshCycleDurationGOOGLE);
 DECLARE_DESERIALISE_TYPE(VkReleaseSwapchainImagesInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkRenderingAreaInfo);
 DECLARE_DESERIALISE_TYPE(VkRenderingAttachmentInfo);
@@ -2512,6 +2670,7 @@ DECLARE_DESERIALISE_TYPE(VkShaderCreateInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkShaderModuleCreateInfo);
 DECLARE_DESERIALISE_TYPE(VkShaderModuleValidationCacheCreateInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkSharedPresentSurfaceCapabilitiesKHR);
+DECLARE_DESERIALISE_TYPE(VkSharedPresentSurfaceCapabilities2KHR);
 DECLARE_DESERIALISE_TYPE(VkSparseImageFormatProperties2);
 DECLARE_DESERIALISE_TYPE(VkSparseImageMemoryRequirements2);
 DECLARE_DESERIALISE_TYPE(VkSubmitInfo);
@@ -2534,6 +2693,7 @@ DECLARE_DESERIALISE_TYPE(VkSurfacePresentModeCompatibilityKHR);
 DECLARE_DESERIALISE_TYPE(VkSurfacePresentModeKHR);
 DECLARE_DESERIALISE_TYPE(VkSurfacePresentScalingCapabilitiesKHR);
 DECLARE_DESERIALISE_TYPE(VkSurfaceProtectedCapabilitiesKHR);
+DECLARE_DESERIALISE_TYPE(VkSwapchainCalibratedTimestampInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkSwapchainCounterCreateInfoEXT);
 DECLARE_DESERIALISE_TYPE(VkSwapchainCreateInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkSwapchainDisplayNativeHdrCreateInfoAMD);
@@ -2541,6 +2701,8 @@ DECLARE_DESERIALISE_TYPE(VkSwapchainPresentFenceInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkSwapchainPresentModeInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkSwapchainPresentModesCreateInfoKHR);
 DECLARE_DESERIALISE_TYPE(VkSwapchainPresentScalingCreateInfoKHR);
+DECLARE_DESERIALISE_TYPE(VkSwapchainTimeDomainPropertiesEXT);
+DECLARE_DESERIALISE_TYPE(VkSwapchainTimingPropertiesEXT);
 DECLARE_DESERIALISE_TYPE(VkTextureLODGatherFormatPropertiesAMD);
 DECLARE_DESERIALISE_TYPE(VkTimelineSemaphoreSubmitInfo);
 DECLARE_DESERIALISE_TYPE(VkValidationCacheCreateInfoEXT);
@@ -2744,6 +2906,18 @@ enum VkPipelineCreateFlagBits2 : uint64_t
 {
 };
 
+enum VkFormatFeatureFlagBits4KHR : uint64_t
+{
+};
+
+enum VkImageUsageFlagBits2KHR : uint64_t
+{
+};
+
+enum VkImageCreateFlagBits2KHR : uint64_t
+{
+};
+
 // enums
 
 DECLARE_REFLECTION_ENUM(VkAccelerationStructureBuildTypeKHR);
@@ -2785,6 +2959,7 @@ DECLARE_REFLECTION_ENUM(VkDebugUtilsMessageSeverityFlagBitsEXT);
 DECLARE_REFLECTION_ENUM(VkDebugUtilsMessageTypeFlagBitsEXT);
 DECLARE_REFLECTION_ENUM(VkDefaultVertexAttributeValueKHR);
 DECLARE_REFLECTION_ENUM(VkDependencyFlagBits);
+DECLARE_REFLECTION_ENUM(VkDepthBiasRepresentationEXT);
 DECLARE_REFLECTION_ENUM(VkDescriptorBindingFlagBits);
 DECLARE_REFLECTION_ENUM(VkDescriptorPoolCreateFlagBits);
 DECLARE_REFLECTION_ENUM(VkDescriptorSetLayoutCreateFlagBits);
@@ -2815,6 +2990,7 @@ DECLARE_REFLECTION_ENUM(VkFlagWithNoBits);
 DECLARE_REFLECTION_ENUM(VkFormat);
 DECLARE_REFLECTION_ENUM(VkFormatFeatureFlagBits);
 DECLARE_REFLECTION_ENUM(VkFormatFeatureFlagBits2);
+DECLARE_REFLECTION_ENUM(VkFormatFeatureFlagBits4KHR);
 DECLARE_REFLECTION_ENUM(VkFragmentShadingRateCombinerOpKHR);
 DECLARE_REFLECTION_ENUM(VkFramebufferCreateFlagBits);
 DECLARE_REFLECTION_ENUM(VkFrontFace);
@@ -2827,10 +3003,12 @@ DECLARE_REFLECTION_ENUM(VkImageAspectFlagBits);
 DECLARE_REFLECTION_ENUM(VkImageCompressionFixedRateFlagBitsEXT);
 DECLARE_REFLECTION_ENUM(VkImageCompressionFlagBitsEXT);
 DECLARE_REFLECTION_ENUM(VkImageCreateFlagBits);
+DECLARE_REFLECTION_ENUM(VkImageCreateFlagBits2KHR);
 DECLARE_REFLECTION_ENUM(VkImageLayout);
 DECLARE_REFLECTION_ENUM(VkImageTiling);
 DECLARE_REFLECTION_ENUM(VkImageType);
 DECLARE_REFLECTION_ENUM(VkImageUsageFlagBits);
+DECLARE_REFLECTION_ENUM(VkImageUsageFlagBits2KHR);
 DECLARE_REFLECTION_ENUM(VkImageViewCreateFlagBits);
 DECLARE_REFLECTION_ENUM(VkImageViewType);
 DECLARE_REFLECTION_ENUM(VkIndexType);
@@ -2843,6 +3021,7 @@ DECLARE_REFLECTION_ENUM(VkMemoryOverallocationBehaviorAMD);
 DECLARE_REFLECTION_ENUM(VkMemoryPropertyFlagBits);
 DECLARE_REFLECTION_ENUM(VkMemoryUnmapFlagBits);
 DECLARE_REFLECTION_ENUM(VkObjectType);
+DECLARE_REFLECTION_ENUM(VkPastPresentationTimingFlagBitsEXT);
 DECLARE_REFLECTION_ENUM(VkPerformanceCounterDescriptionFlagBitsKHR);
 DECLARE_REFLECTION_ENUM(VkPerformanceCounterScopeKHR);
 DECLARE_REFLECTION_ENUM(VkPerformanceCounterStorageKHR);
@@ -2868,6 +3047,8 @@ DECLARE_REFLECTION_ENUM(VkPolygonMode);
 DECLARE_REFLECTION_ENUM(VkPresentGravityFlagBitsKHR);
 DECLARE_REFLECTION_ENUM(VkPresentModeKHR);
 DECLARE_REFLECTION_ENUM(VkPresentScalingFlagBitsKHR);
+DECLARE_REFLECTION_ENUM(VkPresentStageFlagBitsEXT);
+DECLARE_REFLECTION_ENUM(VkPresentTimingInfoFlagBitsEXT);
 DECLARE_REFLECTION_ENUM(VkPrimitiveTopology);
 DECLARE_REFLECTION_ENUM(VkProvokingVertexModeEXT);
 DECLARE_REFLECTION_ENUM(VkQueryControlFlagBits);
@@ -2877,6 +3058,7 @@ DECLARE_REFLECTION_ENUM(VkQueryResultFlagBits);
 DECLARE_REFLECTION_ENUM(VkQueryType);
 DECLARE_REFLECTION_ENUM(VkQueueFlagBits);
 DECLARE_REFLECTION_ENUM(VkQueueGlobalPriority);
+DECLARE_REFLECTION_ENUM(VkRayTracingInvocationReorderModeEXT);
 DECLARE_REFLECTION_ENUM(VkRayTracingShaderGroupTypeKHR);
 DECLARE_REFLECTION_ENUM(VkRenderingFlagBits);
 DECLARE_REFLECTION_ENUM(VkRenderPassCreateFlagBits);

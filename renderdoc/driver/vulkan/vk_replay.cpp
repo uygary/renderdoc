@@ -1637,6 +1637,24 @@ void VulkanReplay::SavePipelineState(uint32_t eventId)
     ret.rasterizer.slopeScaledDepthBias = state.bias.slope;
     ret.rasterizer.lineWidth = state.lineWidth;
 
+    ret.rasterizer.depthBiasExact = state.bias.exact != VK_FALSE;
+    switch(state.bias.repr)
+    {
+      case VK_DEPTH_BIAS_REPRESENTATION_MAX_ENUM_EXT:
+        ret.rasterizer.depthBiasRepresentation = DepthBiasMode::Default;
+        RDCERR("Unexpected value for DepthBiasMode %x", state.bias.repr);
+        break;
+      case VK_DEPTH_BIAS_REPRESENTATION_LEAST_REPRESENTABLE_VALUE_FORMAT_EXT:
+        ret.rasterizer.depthBiasRepresentation = DepthBiasMode::Default;
+        break;
+      case VK_DEPTH_BIAS_REPRESENTATION_LEAST_REPRESENTABLE_VALUE_FORCE_UNORM_EXT:
+        ret.rasterizer.depthBiasRepresentation = DepthBiasMode::ForceUNorm;
+        break;
+      case VK_DEPTH_BIAS_REPRESENTATION_FLOAT_EXT:
+        ret.rasterizer.depthBiasRepresentation = DepthBiasMode::One;
+        break;
+    }
+
     // MSAA
     ret.multisample.rasterSamples = state.rastSamples;
     ret.multisample.sampleShadingEnable = p.sampleShadingEnable;
@@ -2449,31 +2467,44 @@ void VulkanReplay::FillDescriptor(Descriptor &dstel, const DescriptorSetSlot &sr
 
     if(viewid != ResourceId())
     {
+      const VulkanCreationInfo::ImageView &viewInfo = c.m_ImageView[viewid];
+
       dstel.view = viewid;
-      dstel.resource = c.m_ImageView[viewid].image;
-      dstel.format = MakeResourceFormat(c.m_ImageView[viewid].format);
+      dstel.resource = viewInfo.image;
+      dstel.format = MakeResourceFormat(viewInfo.format);
 
-      Convert(dstel.swizzle, c.m_ImageView[viewid].componentMapping);
-      dstel.firstMip = c.m_ImageView[viewid].range.baseMipLevel & 0xff;
-      dstel.firstSlice = c.m_ImageView[viewid].range.baseArrayLayer & 0xffff;
-      dstel.numMips = c.m_ImageView[viewid].range.levelCount & 0xff;
-      dstel.numSlices = c.m_ImageView[viewid].range.layerCount & 0xffff;
+      Convert(dstel.swizzle, viewInfo.componentMapping);
+      dstel.firstMip = viewInfo.range.baseMipLevel & 0xff;
+      dstel.firstSlice = viewInfo.range.baseArrayLayer & 0xffff;
+      dstel.numMips = viewInfo.range.levelCount & 0xff;
+      dstel.numSlices = viewInfo.range.layerCount & 0xffff;
 
-      if(c.m_ImageView[viewid].viewType == VK_IMAGE_VIEW_TYPE_3D)
-        dstel.firstSlice = dstel.numSlices = 0;
+      if(viewInfo.viewType == VK_IMAGE_VIEW_TYPE_3D)
+      {
+        if(descriptorType == DescriptorSlotType::StorageImage)
+        {
+          dstel.firstSlice = viewInfo.storageSliceOffset & 0xffff;
+          dstel.numSlices = viewInfo.storageSliceCount & 0xffff;
+        }
+        else
+        {
+          dstel.firstSlice = 0;
+          dstel.numSlices = 0;
+        }
+      }
 
       // cheeky hack, store image layout enum in byteOffset as it's not used for images
       dstel.byteOffset = convert(srcel.imageLayoutOrFormat);
 
-      dstel.minLODClamp = c.m_ImageView[viewid].minLOD;
+      dstel.minLODClamp = viewInfo.minLOD;
 
-      switch(c.m_ImageView[viewid].viewType)
+      switch(viewInfo.viewType)
       {
         case VK_IMAGE_VIEW_TYPE_1D: dstel.textureType = TextureType::Texture1D; break;
         case VK_IMAGE_VIEW_TYPE_1D_ARRAY: dstel.textureType = TextureType::Texture1DArray; break;
         case VK_IMAGE_VIEW_TYPE_2D:
         {
-          if(c.m_Image[c.m_ImageView[viewid].image].samples > VK_SAMPLE_COUNT_1_BIT)
+          if(c.m_Image[viewInfo.image].samples > VK_SAMPLE_COUNT_1_BIT)
             dstel.textureType = TextureType::Texture2DMS;
           else
             dstel.textureType = TextureType::Texture2D;
@@ -2481,7 +2512,7 @@ void VulkanReplay::FillDescriptor(Descriptor &dstel, const DescriptorSetSlot &sr
         }
         case VK_IMAGE_VIEW_TYPE_2D_ARRAY:
         {
-          if(c.m_Image[c.m_ImageView[viewid].image].samples > VK_SAMPLE_COUNT_1_BIT)
+          if(c.m_Image[viewInfo.image].samples > VK_SAMPLE_COUNT_1_BIT)
             dstel.textureType = TextureType::Texture2DMSArray;
           else
             dstel.textureType = TextureType::Texture2DArray;

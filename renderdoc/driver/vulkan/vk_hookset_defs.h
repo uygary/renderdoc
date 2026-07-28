@@ -561,7 +561,9 @@
   DeclExt(EXT_fragment_density_map_offset);            \
   DeclExt(EXT_image_drm_format_modifier);              \
   DeclExt(EXT_custom_resolve);                         \
-  DeclExt(NV_device_diagnostic_checkpoints);
+  DeclExt(NV_device_diagnostic_checkpoints);           \
+  DeclExt(EXT_depth_bias_control);                     \
+  DeclExt(EXT_present_timing);
 
 // for simplicity and since the check itself is platform agnostic,
 // these aren't protected in platform defines
@@ -709,7 +711,9 @@
   CheckExt(EXT_fragment_density_map_offset, VKXX);            \
   CheckExt(EXT_image_drm_format_modifier, VKXX);              \
   CheckExt(EXT_custom_resolve, VKXX);                         \
-  CheckExt(NV_device_diagnostic_checkpoints, VKXX);
+  CheckExt(NV_device_diagnostic_checkpoints, VKXX);           \
+  CheckExt(EXT_depth_bias_control, VKXX);                     \
+  CheckExt(EXT_present_timing, VKXX);
 
 #define HookInitVulkanInstanceExts_PhysDev()                                                         \
   HookInitExtension(KHR_surface, GetPhysicalDeviceSurfaceSupportKHR);                                \
@@ -1118,6 +1122,11 @@
   HookInitExtension(NV_device_diagnostic_checkpoints, CmdSetCheckpointNV);                           \
   HookInitExtension(NV_device_diagnostic_checkpoints, GetQueueCheckpointDataNV);                     \
   HookInitExtension(NV_device_diagnostic_checkpoints, GetQueueCheckpointData2NV);                    \
+  HookInitExtension(EXT_depth_bias_control, CmdSetDepthBias2EXT);                                    \
+  HookInitExtension(EXT_present_timing, GetPastPresentationTimingEXT);                               \
+  HookInitExtension(EXT_present_timing, GetSwapchainTimeDomainPropertiesEXT);                        \
+  HookInitExtension(EXT_present_timing, GetSwapchainTimingPropertiesEXT);                            \
+  HookInitExtension(EXT_present_timing, SetSwapchainPresentTimingQueueSizeEXT);                      \
   HookInitExtension_Device_Win32();                                                                  \
   HookInitExtension_Device_Linux();                                                                  \
   HookInitExtension_Device_Android();                                                                \
@@ -2098,6 +2107,19 @@
               VkCheckpointDataNV *, pCheckpointData);                                                \
   HookDefine3(void, vkGetQueueCheckpointData2NV, VkQueue, queue, uint32_t *, pCheckpointDataCount,   \
               VkCheckpointData2NV *, pCheckpointData);                                               \
+  HookDefine2(void, vkCmdSetDepthBias2EXT, VkCommandBuffer, commandBuffer,                           \
+              const VkDepthBiasInfoEXT *, pDepthBiasInfo);                                           \
+  HookDefine3(VkResult, vkGetPastPresentationTimingEXT, VkDevice, device,                            \
+              const VkPastPresentationTimingInfoEXT *, pPastPresentationTimingInfo,                  \
+              VkPastPresentationTimingPropertiesEXT *, pPastPresentationTimingProperties);           \
+  HookDefine4(VkResult, vkGetSwapchainTimeDomainPropertiesEXT, VkDevice, device, VkSwapchainKHR,     \
+              swapchain, VkSwapchainTimeDomainPropertiesEXT *, pSwapchainTimeDomainProperties,       \
+              uint64_t *, pTimeDomainsCounter);                                                      \
+  HookDefine4(VkResult, vkGetSwapchainTimingPropertiesEXT, VkDevice, device, VkSwapchainKHR,         \
+              swapchain, VkSwapchainTimingPropertiesEXT *, pSwapchainTimingProperties, uint64_t *,   \
+              pSwapchainTimingPropertiesCounter);                                                    \
+  HookDefine3(VkResult, vkSetSwapchainPresentTimingQueueSizeEXT, VkDevice, device, VkSwapchainKHR,   \
+              swapchain, uint32_t, size);                                                            \
   HookDefine_Win32();                                                                                \
   HookDefine_Linux();                                                                                \
   HookDefine_Android();                                                                              \

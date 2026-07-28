@@ -446,6 +446,8 @@ void Reflector::CheckDebuggable(bool &debuggable, rdcstr &debugStatus) const
       "SPV_KHR_device_group",
       "SPV_KHR_expect_assume",
       "SPV_KHR_float_controls",
+      "SPV_KHR_fma",
+      "SPV_KHR_fragment_shading_rate",
       "SPV_KHR_maximal_reconvergence",
       "SPV_KHR_multiview",
       "SPV_KHR_no_integer_wrap_decoration",
@@ -454,9 +456,11 @@ void Reflector::CheckDebuggable(bool &debuggable, rdcstr &debugStatus) const
       "SPV_KHR_post_depth_coverage",
       "SPV_KHR_quad_control",
       "SPV_KHR_relaxed_extended_instruction",
+      "SPV_KHR_shader_abort",
       "SPV_KHR_shader_atomic_counter_ops",
       "SPV_KHR_shader_ballot",
       "SPV_KHR_shader_clock",
+      "SPV_KHR_shader_constant_data",
       "SPV_KHR_shader_draw_parameters",
       "SPV_KHR_storage_buffer_storage_class",
       "SPV_KHR_subgroup_rotate",
@@ -618,11 +622,15 @@ void Reflector::CheckDebuggable(bool &debuggable, rdcstr &debugStatus) const
       case Capability::SubgroupVoteKHR:
       case Capability::ComputeDerivativeGroupQuadsKHR:
       case Capability::ComputeDerivativeGroupLinearKHR:
-      // SPIR-V 1.6 / SPV_KHR_integer_dot_product
       case Capability::DotProduct:
       case Capability::DotProductInput4x8Bit:
       case Capability::DotProductInput4x8BitPacked:
       case Capability::DotProductInputAll:
+      case Capability::AbortKHR:
+      case Capability::ConstantDataKHR:
+      case Capability::FMAKHR:
+      case Capability::Shader64BitIndexingEXT:
+      case Capability::FragmentShadingRateKHR:
       {
         supported = true;
         break;
@@ -669,22 +677,8 @@ void Reflector::CheckDebuggable(bool &debuggable, rdcstr &debugStatus) const
         break;
       }
 
-      // SPV_KHR_fma
-      case Capability::FMAKHR:
-      {
-        supported = false;
-        break;
-      }
-
       // SPV_KHR_fragment_shader_barycentric
       case Capability::FragmentBarycentricKHR:
-      {
-        supported = false;
-        break;
-      }
-
-      // SPV_KHR_fragment_shading_rate
-      case Capability::FragmentShadingRateKHR:
       {
         supported = false;
         break;
@@ -744,14 +738,8 @@ void Reflector::CheckDebuggable(bool &debuggable, rdcstr &debugStatus) const
         break;
       }
 
+      // SPV_EXT_replicated_composites
       case Capability::ReplicatedCompositesEXT:
-      {
-        supported = false;
-        break;
-      }
-
-      // SPV_EXT_shader_64bit_indexing
-      case Capability::Shader64BitIndexingEXT:
       {
         supported = false;
         break;
@@ -789,14 +777,6 @@ void Reflector::CheckDebuggable(bool &debuggable, rdcstr &debugStatus) const
 
       // SPV_EXT_descriptor_heap
       case Capability::DescriptorHeapEXT:
-      {
-        supported = false;
-        break;
-      }
-
-      // SPV_KHR_constant_data & SPV_KHR_abort
-      case Capability::AbortKHR:
-      case Capability::ConstantDataKHR:
       {
         supported = false;
         break;
@@ -1163,6 +1143,9 @@ ShaderDebugTrace *Debugger::BeginDebug(DebugAPIWrapper *api, const ShaderStage s
   {
     Constant &c = it->second;
 
+    if(c.op == Op::ConstantDataKHR || c.op == Op::SpecConstantDataKHR)
+      continue;
+
     const DataType *typeWalk = &dataTypes[c.type];
     SetStructArrayNames(c.value, typeWalk, specInfo);
   }
@@ -1170,6 +1153,11 @@ ShaderDebugTrace *Debugger::BeginDebug(DebugAPIWrapper *api, const ShaderStage s
   // evaluate all constants
   for(auto it = constants.begin(); it != constants.end(); it++)
   {
+    Constant &c = it->second;
+
+    if(c.op == Op::ConstantDataKHR || c.op == Op::SpecConstantDataKHR)
+      continue;
+
     active.ids[it->first] = EvaluateConstant(it->first, specInfo);
     active.ids[it->first].name = GetRawName(it->first);
   }
@@ -3422,7 +3410,8 @@ ShaderVariable Debugger::MakeCompositePointer(const ShaderVariable &base, Id id,
 
         // offset increases by index * arrayStride
         arrayStride = dec.arrayStride;
-        byteOffset += indices[i] * arrayStride;
+        // ensure calculation is done at 64-bit precision
+        byteOffset += indices[i] * uint64_t(arrayStride);
 
         // new type is the inner type
         type = &dataTypes[type->InnerType()];
@@ -4922,9 +4911,10 @@ void Debugger::RegisterOp(Iter it)
 
   // if we're explicitly leaving the scope because of a DebugNoScope, or if we're leaving due to the
   // end of a block then set scope to NULL now.
-  if(leaveScope || it.opcode() == Op::Kill || it.opcode() == Op::Unreachable ||
-     it.opcode() == Op::Branch || it.opcode() == Op::BranchConditional ||
-     it.opcode() == Op::Switch || it.opcode() == Op::Return || it.opcode() == Op::ReturnValue)
+  if(leaveScope || it.opcode() == Op::Kill || it.opcode() == Op::TerminateInvocation ||
+     it.opcode() == Op::AbortKHR || it.opcode() == Op::Unreachable || it.opcode() == Op::Branch ||
+     it.opcode() == Op::BranchConditional || it.opcode() == Op::Switch ||
+     it.opcode() == Op::Return || it.opcode() == Op::ReturnValue)
   {
     if(m_DebugInfo.curScope)
       m_DebugInfo.curScope->end = it.offs();
@@ -5077,7 +5067,7 @@ void Debugger::ProcessQueuedGpuMathOps()
       const GpuMathOperation &mathOp = workgroup[lane].GetQueuedGpuMathOp();
 
       uint32_t workgroupIndex = mathOp.workgroupIndex;
-      if(apiWrapper->QueueCalculateMathOp(mathOp.op, mathOp.paramVars))
+      if(apiWrapper->QueueCalculateMathOp(mathOp.opcode, mathOp.glslop, mathOp.paramVars))
       {
         pendingGpuMathsOpsResults.push_back(mathOp.result);
       }

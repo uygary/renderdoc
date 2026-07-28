@@ -1137,7 +1137,7 @@ void ThreadState::StepNext(bool useDebugState, const uint32_t steps,
 
       // Result Type must be an OpTypeInt with 32-bit Width and 0 Signedness
       result.type = VarType::UInt;
-      setUintComp(result, 0, uint32_t(byteLen));
+      setUint64Comp(result, 0, byteLen);
 
       SetDst(len.result, result);
 
@@ -2938,6 +2938,34 @@ void ThreadState::StepNext(bool useDebugState, const uint32_t steps,
       break;
     }
 
+    case Op::FmaKHR:
+    {
+      OpFmaKHR fma(it);
+
+      const DataType &resultType = debugger.GetType(fma.resultType);
+
+      if(IsPendingResultReady())
+      {
+        ShaderVariable result = GetPendingResult();
+        result.rows = 1;
+        result.columns = RDCMAX(1U, resultType.vector().count) & 0xff;
+
+        SetDst(fma.result, result);
+        break;
+      }
+
+      rdcarray<ShaderVariable> paramVars;
+      paramVars.push_back(GetSrc(fma.operand1));
+      paramVars.push_back(GetSrc(fma.operand2));
+      paramVars.push_back(GetSrc(fma.operand3));
+
+      ShaderVariable ret = paramVars[0];
+
+      QueueMathOp(Op::FmaKHR, GLSLstd450::Invalid, paramVars, ret);
+
+      break;
+    }
+
       //////////////////////////////////////////////////////////////////////////////
       //
       // Subgroup opcodes
@@ -4277,6 +4305,24 @@ void ThreadState::StepNext(bool useDebugState, const uint32_t steps,
 
       break;
     }
+    case Op::AbortKHR:
+    {
+      // if this actually ran it would have taken down the whole device and we wouldn't be shader
+      // debugging, so we should not hit this.
+      RDCERR(
+          "Op::Abort reached, this should not happen and indicates the shader has diverged from "
+          "GPU execution");
+      DebugBreak();
+      dead = true;
+
+      // destroy all stack frames
+      for(StackFrame *exitingFrame : callstack)
+        delete exitingFrame;
+
+      callstack.clear();
+
+      break;
+    }
     case Op::Return:
     case Op::ReturnValue:
     {
@@ -5382,7 +5428,6 @@ void ThreadState::StepNext(bool useDebugState, const uint32_t steps,
     case Op::CompositeConstructCoopMatQCOM:
     case Op::CompositeExtractCoopMatQCOM:
     case Op::ExtractSubArrayQCOM:
-    case Op::FmaKHR:
     case Op::BufferPointerEXT:
     case Op::UntypedImageTexelPointerEXT:
     case Op::ConstantSizeOfEXT:
@@ -5421,7 +5466,6 @@ void ThreadState::StepNext(bool useDebugState, const uint32_t steps,
     case Op::HitObjectIsEmptyEXT:
     case Op::HitObjectIsHitEXT:
     case Op::HitObjectIsMissEXT:
-    case Op::AbortKHR:
     case Op::PoisonKHR:
     case Op::FreezeKHR:
     case Op::BitcastExtractEXT:
@@ -5712,13 +5756,14 @@ void ThreadState::ExecuteMemoryBarrier(Id semanticsId)
   }
 }
 
-void ThreadState::QueueMathOp(GLSLstd450 op, const rdcarray<ShaderVariable> &paramVars,
-                              const ShaderVariable &result)
+void ThreadState::QueueMathOp(Op opcode, GLSLstd450 glslop,
+                              const rdcarray<ShaderVariable> &paramVars, const ShaderVariable &result)
 {
   SPIRV_DEBUG_RDCASSERT(!IsPendingResultPending());
   pendingResultData = result;
   queuedGpuMathOp.workgroupIndex = workgroupIndex;
-  queuedGpuMathOp.op = op;
+  queuedGpuMathOp.opcode = opcode;
+  queuedGpuMathOp.glslop = glslop;
   queuedGpuMathOp.paramVars = paramVars;
   queuedGpuMathOp.result = &pendingResultData;
   SetStepNeedsGpuMathOp();
