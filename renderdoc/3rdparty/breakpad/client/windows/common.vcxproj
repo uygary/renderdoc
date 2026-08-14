@@ -61,7 +61,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)renderdoc\3rdparty\</AdditionalIncludeDirectories>
-      <AdditionalOptions>/MP /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/MP /Gy %(AdditionalOptions)</AdditionalOptions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -78,13 +78,13 @@
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>../../third_party/platformsdk_win7/files/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/ignore:4221 /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4221 /Gy %(AdditionalOptions)</AdditionalOptions>
       <OutputFile>$(OutDir)\$(ProjectName).lib</OutputFile>
     </Lib>
     <Link>
       <AdditionalDependencies>wininet.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../third_party/platformsdk_win7/files/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/dynamicbase /ignore:4199 /ignore:4221 /nxcompat /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/dynamicbase /ignore:4199 /ignore:4221 /nxcompat /Gy %(AdditionalOptions)</AdditionalOptions>
       <DelayLoadDLLs>dbghelp.dll;dwmapi.dll;uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <FixedBaseAddress>false</FixedBaseAddress>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -111,7 +111,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Development|ARM64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)renderdoc\3rdparty\</AdditionalIncludeDirectories>
-      <AdditionalOptions>/MP /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/MP /Gy %(AdditionalOptions)</AdditionalOptions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -128,13 +128,13 @@
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>../../third_party/platformsdk_win7/files/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/ignore:4221 /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4221 /Gy %(AdditionalOptions)</AdditionalOptions>
       <OutputFile>$(OutDir)\$(ProjectName).lib</OutputFile>
     </Lib>
     <Link>
       <AdditionalDependencies>wininet.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../third_party/platformsdk_win7/files/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/dynamicbase /ignore:4199 /ignore:4221 /nxcompat /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/dynamicbase /ignore:4199 /ignore:4221 /nxcompat /Gy %(AdditionalOptions)</AdditionalOptions>
       <DelayLoadDLLs>dbghelp.dll;dwmapi.dll;uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <FixedBaseAddress>false</FixedBaseAddress>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -161,7 +161,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)renderdoc\3rdparty\</AdditionalIncludeDirectories>
-      <AdditionalOptions>/MP /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/MP /Gy %(AdditionalOptions)</AdditionalOptions>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat></DebugInformationFormat>
       <DisableSpecificWarnings>4100;4127;4396;4503;4512;4819;4995;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -177,13 +177,13 @@
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>../../third_party/platformsdk_win7/files/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/ignore:4221 /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4221 /Gy %(AdditionalOptions)</AdditionalOptions>
       <OutputFile>$(OutDir)\$(ProjectName).lib</OutputFile>
     </Lib>
     <Link>
       <AdditionalDependencies>wininet.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../third_party/platformsdk_win7/files/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/dynamicbase /ignore:4199 /ignore:4221 /nxcompat /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/dynamicbase /ignore:4199 /ignore:4221 /nxcompat /Gy %(AdditionalOptions)</AdditionalOptions>
       <DelayLoadDLLs>dbghelp.dll;dwmapi.dll;uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <FixedBaseAddress>false</FixedBaseAddress>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -213,7 +213,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)renderdoc\3rdparty\</AdditionalIncludeDirectories>
-      <AdditionalOptions>/MP /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/MP /Gy %(AdditionalOptions)</AdditionalOptions>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DebugInformationFormat></DebugInformationFormat>
       <DisableSpecificWarnings>4100;4127;4396;4503;4512;4819;4995;4800;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -229,13 +229,13 @@
     </ClCompile>
     <Lib>
       <AdditionalLibraryDirectories>../../third_party/platformsdk_win7/files/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/ignore:4221 /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/ignore:4221 /Gy %(AdditionalOptions)</AdditionalOptions>
       <OutputFile>$(OutDir)\$(ProjectName).lib</OutputFile>
     </Lib>
     <Link>
       <AdditionalDependencies>wininet.lib;version.lib;msimg32.lib;ws2_32.lib;usp10.lib;psapi.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../third_party/platformsdk_win7/files/Lib/x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalOptions>/dynamicbase /ignore:4199 /ignore:4221 /nxcompat /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/dynamicbase /ignore:4199 /ignore:4221 /nxcompat /Gy %(AdditionalOptions)</AdditionalOptions>
       <DelayLoadDLLs>dbghelp.dll;dwmapi.dll;uxtheme.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
       <FixedBaseAddress>false</FixedBaseAddress>
       <GenerateDebugInformation>true</GenerateDebugInformation>

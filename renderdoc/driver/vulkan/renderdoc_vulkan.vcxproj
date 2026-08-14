@@ -67,7 +67,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalIncludeDirectories>$(SolutionDir)renderdoc\;$(SolutionDir)renderdoc\3rdparty\</AdditionalIncludeDirectories>
@@ -78,7 +78,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>precompiled.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
-      <AdditionalOptions>/w44062 /w44840 /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/w44062 /w44840 /Gy %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -121,7 +121,7 @@
     <ClCompile Include="vk_rendertext.cpp" />
     <ClCompile Include="vk_rendertexture.cpp" />
     <ClCompile Include="vk_serialise.cpp">
-      <AdditionalOptions>/bigobj /Zm200 /Gy %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/bigobj /Gy %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="vk_shaderdebug.cpp" />
     <ClCompile Include="vk_shader_cache.cpp" />
