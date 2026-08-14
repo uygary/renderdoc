@@ -160,6 +160,14 @@ BufferFormatSpecifier::BufferFormatSpecifier(QWidget *parent)
     formatAndApply->layout()->addWidget(applyFrame);
   }
 
+  // Remove widgets from the UI-generated layout before reparenting them.
+  // Qt6 crashes if widgets are reparented while still tracked by their old layout.
+  if(QLayout *oldLayout = ui->formatGroup->layout())
+  {
+    oldLayout->removeWidget(ui->helpText);
+    oldLayout->removeWidget(ui->savedContainer);
+  }
+
   QWidget *helpOrFormat = new QWidget(this);
   {
     QHBoxLayout *hbox = new QHBoxLayout();
