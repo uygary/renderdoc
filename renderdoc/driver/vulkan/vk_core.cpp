@@ -3942,6 +3942,8 @@ RDResult WrappedVulkan::ContextReplayLog(CaptureState readType, uint32_t startEv
 {
   m_FrameReader->SetOffset(0);
 
+  m_HasSubmit = false;
+
   ReadSerialiser ser(m_FrameReader, Ownership::Nothing);
 
   ser.SetStringDatabase(&m_StringDB);
@@ -6207,6 +6209,11 @@ void WrappedVulkan::BakeEventNodes(ActionDescription &rootAction)
     CommandBufferNode *rebaseNode = BuildSubmitTree(submitInfo.cmdId, submitInfo.eid);
     m_Partial.commandTree.push_back(rebaseNode);
   }
+
+  // release the EventNodes now they are baked into actions and events
+  m_EventNodes.clear();
+  for(auto it = m_BakedCmdBufferInfo.begin(); it != m_BakedCmdBufferInfo.end(); ++it)
+    it->second.eventNodes.clear();
 }
 
 void WrappedVulkan::AddAction(const ActionDescription &a)
